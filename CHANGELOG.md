@@ -9,6 +9,83 @@ three independent streams:
 
 ---
 
+## 1.3.0 — 2026-03-29
+
+**Plugins v1.7.21** | **VS Code 1.109.4**
+
+### Plugins
+
+#### v1.7.21 — 2026-03-29
+- Added: [visual-editor] Object-level properties in GX Properties panel — clicking on line 1 of any `.gxSource` shows editable properties (Description, Call Protocol, Object Visibility, etc.) driven by `gx-properties-config.json`
+- Added: [visual-editor] Table attribute properties — clicking attribute in `.Table.gxSource` shows properties in readonly mode
+- Added: [visual-editor] ExternalObject member properties — Properties, Methods, Parameters, Events shown with member-specific properties
+- Added: [visual-editor] New reference property types: `SDTReference`, `MasterPageReference`, `ThemeReference`
+- Added: [visual-editor] Property value remapping — internal GeneXus names mapped to display names (prettyName)
+- Added: [visual-editor] Multi-line Formula display with auto-sizing textarea
+- Added: [visual-editor] Subcategory visual nesting with `/` separator
+- Added: [visual-editor] Enum display names in dropdown properties
+- Added: [visual-editor] Conditional property visibility and readonly rules from config
+- Added: [visual-editor] Fallback properties for undeclared object types (BASE + BASE_VISIBILITY)
+- Changed: [visual-editor] JSON/Traditional toggle moved inside element header
+- Fixed: [visual-editor] DataType shown as readonly (not hidden) when based on Domain
+- Fixed: [visual-editor] Multi-line property parsing and write-back with correct indentation
+- Fixed: [visual-editor] Comma formatting in property blocks handles multi-line values
+- Added: [analyzer] Full syntax parsing for `.Group.gxSource` files
+- Fixed: [parser] Multi-line string values supported in all property blocks
+- Fixed: [validator] "requires a variable (mode: out)" downgraded from Error to Warning
+- Fixed: [sync-status] Bulk export end detection uses file modification time as reference
+- Added: [config] `PrivateObject` moved to ignored properties
+- Changed: [config] BASE split into BASE (Description) and BASE_VISIBILITY (ObjectVisibility)
+
+#### v1.7.20 — 2026-03-28
+- Added: [sync-status] `.gxForm` files now tracked as user changes
+
+#### v1.7.19 — 2026-03-26
+- Added: [analyzer] Full syntax parsing for `.Table.gxSource` files (PhysicalAttributes, LogicalAttributes, RedundantAttributes, Indexes, ForeignTables, etc.)
+- Added: [analyzer] Full syntax parsing for `.ExternalObject.gxSource` files (Properties, Methods, Events)
+- Added: [analyzer] `[readonly]` section protection with distinct grey border decoration
+- Added: [analyzer] Multi-line string support in LogicalAttributes Formula
+- Added: [icons] Table icon with grid/column design
+- Added: [core] `.Table.gxSource` registered as GeneXus language file
+- Added: [sync-status] "Delete All Pending" button in deletion confirmation
+- Fixed: [sync-status] Files modified during bulk export excluded from change tracking
+- Fixed: [parser] `Dom:DomainName.Value` syntax recognized
+
+#### v1.7.18 — 2026-03-25
+- Added: [sync-status] Bulk export detection — mass externalization pauses file change tracking
+- Added: [sync-status] Status bar spinner during bulk export: "KBBridge: Exporting KB..."
+- Added: [sync-status] Banner in Sync panel during bulk export
+- Added: [sync-status] Configurable bulk export timeout (default 30 min) with notification
+- Added: [sync-status] Startup detection of in-progress bulk export
+
+### Platform
+- Added: MCP server embedded in installer for all platforms (esbuild bundle + platform-specific native addons)
+- Added: Auto-generate AI config files for GeneXus workspaces (`.vscode/mcp.json`, `.mcp.json`, `CLAUDE.md`, `.cursor/mcp.json`)
+- Added: MCP server uses KBbridge's own Electron as Node runtime (`ELECTRON_RUN_AS_NODE=1`) — no external Node.js required
+- Added: MCP config merge logic — adds server to existing config files without overwriting
+- Added: Versioning system — `version.json` as single source of truth, CI reads it for artifact names
+- Added: Unified CHANGELOG across Plugins/Platform/VS Code streams
+- Added: CI publishes installers to public `kbbridge-releases` repo with structured release notes
+- Added: CI auto-updates public repo README with direct per-platform download links
+- Added: CI publishes CHANGELOG.md to public repo automatically
+- Added: Installer files renamed from VS Code version to KBbridge version (e.g., `KBbridgeSetup-x64-1.3.0.exe`)
+- Added: AI context files committed to git (`kbbridge/.ai-context/`) for project continuity
+- Added: `CLAUDE.md` at repo root for Claude Code auto-loading
+- Added: New shared config `gx-properties-config.json` for object property definitions
+- Fixed: Extension loading isolation — one extension failure no longer blocks the remaining 5
+- Fixed: MCP server dependency resolution — auto-walk full transitive dep tree (55 packages) instead of manual cherry-picking
+- Fixed: Stubs for `sharp` and `onnxruntime-web` (imported by transformers but unused on Node.js)
+- Fixed: core-lib `package.json` created inline (not copied from plugins repo — broke on CI)
+- Fixed: macOS embed script compatibility (`mktemp` and `sed` BSD syntax)
+- Fixed: GitHub Actions `secrets` not allowed in step-level `if` expressions
+- Changed: VSIX skeletons updated (core: Table file type, sync-status: bulk export timeout, icons: Table icon)
+- Changed: Bundle rebuilt — 663 JS files (was 662)
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
 ## 1.2.0 — 2026-03-26
 
 **Plugins v1.7.17** | **VS Code 1.109.4**
