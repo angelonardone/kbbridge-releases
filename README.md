@@ -32,4 +32,4 @@ IntelliSense, visual editing, AI-assisted development, and offline licensing —
 
 ---
 
-> [Changelog](https://github.com/angelonardone/kbbridge-releases/blob/main/CHANGELOG.md) | [Releases](https://github.com/angelonardone/kbbridge-releases/releases) | [kbeditor.com](https://kbeditor.com)
+> [Changelog](https://github.com/angelonardone/kbbridge-releases/blob/main/CHANGELOG.md) | [Releases](https://github.com/angelonardone/kbbridge-releases/releases) | [kbbridge.com](https://kbbridge.com)
