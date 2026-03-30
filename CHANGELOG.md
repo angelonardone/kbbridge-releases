@@ -1,10 +1,10 @@
-# KBbridge Changelog
+# KBEditor Changelog
 
-All notable changes to the KBbridge product. Each release documents changes across
+All notable changes to the KBEditor product. Each release documents changes across
 three independent streams:
 
 - **Plugins** — GeneXus language extensions (IntelliSense, parser, validator, visual editor, etc.)
-- **Platform** — KBbridge-specific infrastructure (license manager, MCP server, embed pipeline, CI/CD)
+- **Platform** — KBEditor-specific infrastructure (license manager, MCP server, embed pipeline, CI/CD)
 - **VS Code** — Upstream VS Code base (via VSCodium)
 
 ---
@@ -53,7 +53,7 @@ three independent streams:
 
 #### v1.7.18 — 2026-03-25
 - Added: [sync-status] Bulk export detection — mass externalization pauses file change tracking
-- Added: [sync-status] Status bar spinner during bulk export: "KBBridge: Exporting KB..."
+- Added: [sync-status] Status bar spinner during bulk export: "KBEditor: Exporting KB..."
 - Added: [sync-status] Banner in Sync panel during bulk export
 - Added: [sync-status] Configurable bulk export timeout (default 30 min) with notification
 - Added: [sync-status] Startup detection of in-progress bulk export
@@ -61,14 +61,14 @@ three independent streams:
 ### Platform
 - Added: MCP server embedded in installer for all platforms (esbuild bundle + platform-specific native addons)
 - Added: Auto-generate AI config files for GeneXus workspaces (`.vscode/mcp.json`, `.mcp.json`, `CLAUDE.md`, `.cursor/mcp.json`)
-- Added: MCP server uses KBbridge's own Electron as Node runtime (`ELECTRON_RUN_AS_NODE=1`) — no external Node.js required
+- Added: MCP server uses KBEditor's own Electron as Node runtime (`ELECTRON_RUN_AS_NODE=1`) — no external Node.js required
 - Added: MCP config merge logic — adds server to existing config files without overwriting
 - Added: Versioning system — `version.json` as single source of truth, CI reads it for artifact names
 - Added: Unified CHANGELOG across Plugins/Platform/VS Code streams
 - Added: CI publishes installers to public `kbbridge-releases` repo with structured release notes
 - Added: CI auto-updates public repo README with direct per-platform download links
 - Added: CI publishes CHANGELOG.md to public repo automatically
-- Added: Installer files renamed from VS Code version to KBbridge version (e.g., `KBbridgeSetup-x64-1.3.0.exe`)
+- Added: Installer files renamed from VS Code version to KBEditor version (e.g., `KBEditorSetup-x64-1.3.0.exe`)
 - Added: AI context files committed to git (`kbbridge/.ai-context/`) for project continuity
 - Added: `CLAUDE.md` at repo root for Claude Code auto-loading
 - Added: New shared config `gx-properties-config.json` for object property definitions
@@ -105,7 +105,7 @@ three independent streams:
 - Fixed: [visual-editor] SDT type classification for DataTypes with `.` in name
 - Added: [visual-editor] SDT autocomplete shows nested collection items (on-demand top-10 expansion)
 - Fixed: [visual-editor] Autocomplete no longer disappears when typing `,` for module filtering
-- Added: [sync-status] KBBridge export exclusion — files exported by KBBridge not tracked as user changes
+- Added: [sync-status] KBEditor export exclusion — files exported by KBEditor not tracked as user changes
 - Changed: [icons] Knowledge Base icon redesigned — 3D cube with semi-transparent faces
 
 #### v1.7.16 — 2026-03-23
@@ -121,12 +121,12 @@ three independent streams:
 - Fixed: [parser] `Count(attribute, condition)` recognized as valid function call
 - Fixed: [parser] `&Commit` and keyword-named variables parsed correctly in all contexts
 - Fixed: [analyzer] `[dynamic]` sections now offer dialog instead of silently blocking edits
-- Added: [core] "KBBridge: Reindex Cache" command with progress bar
+- Added: [core] "KBEditor: Reindex Cache" command with progress bar
 - Fixed: [core] Go to Definition adds found objects to cache for instant subsequent lookups
 - Fixed: [core] Hover and Code Action use cached KB objects instead of full workspace scan
 - Fixed: [core] Output panel no longer opens automatically on reload
 - Added: [sync-status] Delete button on Pending entries with confirmation dialog
-- Changed: [sync-status] Panel title "GX Sync" → "KBBridge Sync"
+- Changed: [sync-status] Panel title "GX Sync" → "KBEditor Sync"
 
 #### v1.7.15 — 2026-03-21
 - Added: [validator] Built-in function validation for `Msg` (1-2 params) and `iif` (3 params)
@@ -140,7 +140,7 @@ three independent streams:
 - Added: MCP server embedded in installer for all platforms (Windows, Linux, macOS)
 - Added: esbuild bundling — MCP server JS bundled to single 2.2 MB file, only native addons shipped separately
 - Added: Auto-generate AI config files when GeneXus workspace detected (`.vscode/mcp.json`, `.mcp.json`, `CLAUDE.md`, `.cursor/mcp.json`)
-- Added: MCP configs use KBbridge's own Electron as Node runtime (`ELECTRON_RUN_AS_NODE=1`) — no external Node.js needed
+- Added: MCP configs use KBEditor's own Electron as Node runtime (`ELECTRON_RUN_AS_NODE=1`) — no external Node.js needed
 - Added: MCP config merge logic — adds `genexus-knowledge` to existing config files without overwriting
 - Added: Per-module feature documentation in PRODUCT_OVERVIEW.md
 - Added: Date + commit hash in CI artifact names for build identification
@@ -149,7 +149,7 @@ three independent streams:
 - Fixed: core-lib `package.json` created inline (not copied from plugins repo — broke on CI)
 - Fixed: MCP server dependency resolution — auto-walk full transitive dep tree (55 packages) instead of manual cherry-picking
 - Fixed: Added stubs for `sharp` and `onnxruntime-web` (imported by transformers but unused)
-- Changed: VSIX skeletons updated — KBBridge command categories, reindexCache command, new KB icon
+- Changed: VSIX skeletons updated — KBEditor command categories, reindexCache command, new KB icon
 - Changed: Embed script creates core-lib directory structure with `package.json` + 3 shared JSON configs
 - Changed: Bundle source hotfixes (non-blocking indexer, icon mappings) now inactive — upstream has them natively
 
@@ -256,7 +256,7 @@ three independent streams:
 - Added: [server] Language Server with Go to Definition, Hover, Code completion
 
 ### Platform
-- Added: KBbridge branded VS Code fork (based on VSCodium)
+- Added: KBEditor branded VS Code fork (based on VSCodium)
 - Added: Custom branding — name, icons, data folder (`.kbbridge`)
 - Added: Phase 0 — embed proprietary extensions as built-in (non-uninstallable)
 - Added: Phase 1 — Rust native loader with AES-256-GCM decryption
