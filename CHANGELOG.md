@@ -9,6 +9,44 @@ three independent streams:
 
 ---
 
+## 1.4.0 — 2026-03-30
+
+**Plugins v1.7.23** | **VS Code 1.109.4**
+
+### Plugins
+
+#### v1.7.23 — 2026-03-30
+- Added: [core] Signature Help for variable methods — `&Variable.Method(` shows parameter hints from methods config for all data types including External Objects
+- Added: [core] Signature Help for `.Submit()` calls with first parameter documentation
+- Added: [core] Active parameter highlighting — advances highlighted parameter as you type commas
+- Improved: [core] Signature Help regex patterns now case-insensitive
+- Improved: [core] Signature Help persists while typing arguments
+- Added: [config] `Sleep`, `RGB`, `Space`, `StrSearch`, `StrSearchRev`, `StrReplace` added to built-in functions
+- Improved: [core-lib] `getMethodsForType()` searches both builtInTypes and externalObjectTypes
+- Improved: [core-lib] SDT fields without explicit DataType default to `Numeric(4.0)`
+
+#### v1.7.22 — 2026-03-29
+- Added: [visual-editor] Visual distinction between editable, readonly, and default properties
+- Added: [visual-editor] Editable input fields show blue border on focus
+- Added: [visual-editor] Dropdown options display with bright text even in dimmed state
+- Fixed: [visual-editor] Domain chain resolution — multi-level domain references fully resolved to base type
+- Fixed: [visual-editor] Domain file lookup uses CacheManager as fallback
+- Fixed: [visual-editor] RestoreToDefault for reference properties correctly removes DataType
+- Fixed: [visual-editor] RestoreToDefault on pattern nodes preserves CustomType dropdown options
+- Fixed: [visual-editor] Direct text input in CodeConditions/CodeExpressions no longer wraps in brackets
+- Fixed: [visual-editor] Reference fields no longer show double border
+- Fixed: [config] Web Service Protocol properties correctly hidden when "Expose as Web Service" is false
+- Added: [core] File badges for Table (TB), Attribute (AT), and Domain (DM) in Explorer
+
+### Platform
+- Changed: Updated shared config `gx-functions-config.json` (6 new built-in functions)
+- Changed: Product renamed from KBbridge to KBEditor (display name only — internal IDs preserved)
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
 ## 1.3.0 — 2026-03-29
 
 **Plugins v1.7.21** | **VS Code 1.109.4**
