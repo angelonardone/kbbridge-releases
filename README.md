@@ -1,11 +1,14 @@
-# KBEditor Downloads
+# KBbridge Downloads
 
-**Professional VS Code editor for GeneXus developers.**
-IntelliSense, visual editing, AI-assisted development, and offline licensing — all in one.
-
-**Current version: v1.3.0** — Plugins v1.7.21 | VS Code 1.109.4
+**Professional tools for GeneXus developers.**
 
 ---
+
+## KBEditor
+
+Modern VS Code editor with IntelliSense, visual editing, AI-assisted development, and offline licensing.
+
+**Current version: v1.3.0** — Plugins v1.7.21 | VS Code 1.109.4
 
 ### Windows (x64)
 
@@ -30,6 +33,18 @@ IntelliSense, visual editing, AI-assisted development, and offline licensing —
 | KBEditor-darwin-arm64-1.3.0.zip | Apple Silicon (M1 / M2 / M3 / M4) | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.3.0/KBEditor-darwin-arm64-1.3.0.zip) |
 | KBEditor-darwin-x64-1.3.0.zip | Intel Mac | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.3.0/KBEditor-darwin-x64-1.3.0.zip) |
 
+> [KBEditor Changelog](https://github.com/angelonardone/kbbridge-releases/blob/main/CHANGELOG.md)
+
 ---
 
-> [Changelog](https://github.com/angelonardone/kbbridge-releases/blob/main/CHANGELOG.md) | [Releases](https://github.com/angelonardone/kbbridge-releases/releases) | [kbbridge.com](https://kbbridge.com)
+## KBSync
+
+GeneXus Knowledge Base synchronization tool — converts GeneXus objects to text files and vice versa.
+
+**Current version:** *Coming soon*
+
+> [KBSync Changelog](https://github.com/angelonardone/kbbridge-releases/blob/main/CHANGELOG-kbsync.md)
+
+---
+
+> [All Releases](https://github.com/angelonardone/kbbridge-releases/releases) | [kbbridge.com](https://kbbridge.com)
