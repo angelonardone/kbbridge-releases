@@ -9,6 +9,33 @@ three independent streams:
 
 ---
 
+## 1.5.0 — 2026-04-01
+
+**Plugins v1.7.24** | **VS Code 1.109.4**
+
+### Plugins
+
+#### v1.7.24 — 2026-03-31
+- Fixed: [sync-status] User saves in VSCode no longer blocked by KBEditor export check — `onDidSaveTextDocument` bypasses export filter (only external changes filtered)
+- Fixed: [sync-status] `.gxForm` files correctly extracted by ObjectInfoExtractor — form saves generate proper change entries with object name and type
+
+### Platform
+- Changed: Start menu folder set to "KBbridge" (shared with KBSync)
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
+## 1.4.1 — 2026-03-30
+
+**Plugins v1.7.23** | **VS Code 1.109.4**
+
+### Platform
+- Fixed: Cached encrypted bundle now invalidated on app update — stores app version alongside bundle and forces re-download when version changes
+
+---
+
 ## 1.4.0 — 2026-03-30
 
 **Plugins v1.7.23** | **VS Code 1.109.4**
