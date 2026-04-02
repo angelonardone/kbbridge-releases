@@ -4,6 +4,30 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 
 ---
 
+## 1.2.49 — 2026-04-02
+
+### Sync Engine
+
+#### v1.4.1 — 2026-04-02
+- Fixed: Geography types (GeoPoint, GeoLine, GeoPolygon, Geography) now supported in GeneXus 15 and 16 (previously restricted to GX 17+)
+- Fixed: BlobFile data type now supported in GeneXus 16 (previously restricted to GX 17+)
+- Fixed: AverageLength property serialization/deserialization now works in GeneXus 15 and 16 (previously restricted to GX 17+)
+
+#### v1.4.0 — 2026-04-01
+- Added: Multi-version GeneXus support — now compatible with GeneXus X, XEv1, XEv2, XEv3, 15, 16, 17 and 18
+- Added: Simplified PuntoExe.PXTools.dll (one per GeneXus version) abstracts all SDK differences — KBbridge.exe code is shared across versions
+
+### Sync Manager
+
+#### v1.2.49 — 2026-04-02
+- No additional changes (Engine binaries update only)
+
+#### v1.2.48 — 2026-04-01
+- Added: Support for all GeneXus versions (X, X Evo1/2/3, 15, 16, 17, 18) with dedicated binaries per version
+- Fixed: "Use same registration data" checkbox now disabled when no previous registration data exists
+
+---
+
 ## 1.2.47 — 2026-03-30
 
 ### Sync Engine v1.3.5
