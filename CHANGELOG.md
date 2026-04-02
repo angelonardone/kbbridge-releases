@@ -9,6 +9,19 @@ three independent streams:
 
 ---
 
+## 1.5.1 — 2026-04-02
+
+**Plugins v1.7.24** | **VS Code 1.109.4**
+
+### Platform
+- Fixed: Webview TypeScript now compiled separately (visual-editor webview has own tsconfig)
+- Fixed: CSS files now included in encrypted bundle (4 files for properties-panel, sync-panel, new-object-panel, tree-editor)
+- Fixed: CSS and webview source files written to disk by license manager (webviews load via URI)
+- Fixed: GX Properties panel now updates correctly — object properties on line 1, updated styling
+- Fixed: GxPropertiesConfigManager config path — added root-level `node_modules/` alongside `out/node_modules/`
+
+---
+
 ## 1.5.0 — 2026-04-01
 
 **Plugins v1.7.24** | **VS Code 1.109.4**
