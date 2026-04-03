@@ -4,6 +4,16 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 
 ---
 
+## 1.2.50 — 2026-04-03
+
+### Sync Engine v1.4.2
+- Fixed: Pattern instance XML export now removes GUID prefixes from attribute references, producing human-readable names in `.gxPattern` files
+
+### Sync Manager v1.2.50
+- No additional changes (Engine binaries update only)
+
+---
+
 ## 1.2.49 — 2026-04-02
 
 ### Sync Engine
