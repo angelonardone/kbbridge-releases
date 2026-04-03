@@ -9,6 +9,45 @@ three independent streams:
 
 ---
 
+## 1.5.3 — 2026-04-03
+
+**Plugins v1.7.25** | **VS Code 1.109.4**
+
+### Plugins
+
+#### v1.7.25 — 2026-04-03
+- Fixed: [validator] Parameter mode prefixes (`In:`, `Out:`, `InOut:`) now case-insensitive in Parm() declarations
+- Fixed: [validator] "requires a variable (mode: out/inout)" warning now only triggers for non-assignable values
+- Fixed: [visual-editor] GX Properties shows variable properties when cursor is on `&Variable` in any Transaction section
+- Added: [server] Method autocompletion auto-inserts parentheses and triggers Signature Help
+
+### Platform
+- Removed: All debug traces and diagnostic code from license manager
+- Fixed: Updated ALL VSIX skeletons with current plugin defaults (validator rules enabled)
+- Fixed: Added require.resolve to bundle module hook
+- Added: Bundle loading lessons documented in .ai-context/
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
+## 1.5.2 — 2026-04-02
+
+**Plugins v1.7.24** | **VS Code 1.109.4**
+
+### Platform
+- Fixed: sync-status extension now loaded from encrypted bundle (was running from old VSIX stub — all new features were invisible)
+- Fixed: Webview TypeScript compiled separately for visual-editor and sync-status (both have their own tsconfig.json)
+- Fixed: CSS files now included in encrypted bundle and written to disk (4 files for properties-panel, sync-panel, new-object-panel, tree-editor)
+- Fixed: JSON schema files now included in bundle and written to disk (7 property schemas for visual-editor)
+- Fixed: VSIX skeleton updated with current property schemas (attribute.json, transaction-attribute.json changed)
+- Fixed: GxPropertiesConfigManager config path — added root-level `node_modules/` alongside `out/node_modules/`
+- Fixed: Bundle now collects .js + .css + .json files (was .js only)
+- Fixed: License manager writes all webview, CSS, JSON, and schema files to disk at bundle load time
+
+---
+
 ## 1.5.1 — 2026-04-02
 
 **Plugins v1.7.24** | **VS Code 1.109.4**

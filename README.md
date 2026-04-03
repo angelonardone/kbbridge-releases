@@ -8,30 +8,30 @@
 
 Modern VS Code editor with IntelliSense, visual editing, AI-assisted development, and offline licensing.
 
-**Current version: v1.5.1** — Plugins v1.7.24 | VS Code 1.109.4
+**Current version: v1.5.3** — Plugins v1.7.25 | VS Code 1.109.4
 
 ### Windows (x64)
 
 | File | Description | Download |
 |------|-------------|----------|
-| KBEditorUserSetup-x64-1.5.1.exe | **Recommended** — User installer (no admin) | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.5.1/KBEditorUserSetup-x64-1.5.1.exe) |
-| KBEditorSetup-x64-1.5.1.exe | System installer (requires admin) | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.5.1/KBEditorSetup-x64-1.5.1.exe) |
-| KBEditor-win32-x64-1.5.1.zip | Portable — extract and run | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.5.1/KBEditor-win32-x64-1.5.1.zip) |
+| KBEditorUserSetup-x64-1.5.3.exe | **Recommended** — User installer (no admin) | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.5.3/KBEditorUserSetup-x64-1.5.3.exe) |
+| KBEditorSetup-x64-1.5.3.exe | System installer (requires admin) | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.5.3/KBEditorSetup-x64-1.5.3.exe) |
+| KBEditor-win32-x64-1.5.3.zip | Portable — extract and run | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.5.3/KBEditor-win32-x64-1.5.3.zip) |
 
 ### Linux (x64)
 
 | File | Description | Download |
 |------|-------------|----------|
-| kbeditor_1.5.1_amd64.deb | Debian / Ubuntu | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.5.1/kbeditor_1.5.1_amd64.deb) |
-| kbeditor-1.5.1-el8.x86_64.rpm | Red Hat / Fedora | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.5.1/kbeditor-1.5.1-el8.x86_64.rpm) |
-| KBEditor-linux-x64-1.5.1.tar.gz | Portable tarball | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.5.1/KBEditor-linux-x64-1.5.1.tar.gz) |
+| kbeditor_1.5.3_amd64.deb | Debian / Ubuntu | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.5.3/kbeditor_1.5.3_amd64.deb) |
+| kbeditor-1.5.3-el8.x86_64.rpm | Red Hat / Fedora | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.5.3/kbeditor-1.5.3-el8.x86_64.rpm) |
+| KBEditor-linux-x64-1.5.3.tar.gz | Portable tarball | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.5.3/KBEditor-linux-x64-1.5.3.tar.gz) |
 
 ### macOS
 
 | File | Description | Download |
 |------|-------------|----------|
-| KBEditor-darwin-arm64-1.5.1.zip | Apple Silicon (M1 / M2 / M3 / M4) | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.5.1/KBEditor-darwin-arm64-1.5.1.zip) |
-| KBEditor-darwin-x64-1.5.1.zip | Intel Mac | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.5.1/KBEditor-darwin-x64-1.5.1.zip) |
+| KBEditor-darwin-arm64-1.5.3.zip | Apple Silicon (M1 / M2 / M3 / M4) | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.5.3/KBEditor-darwin-arm64-1.5.3.zip) |
+| KBEditor-darwin-x64-1.5.3.zip | Intel Mac | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.5.3/KBEditor-darwin-x64-1.5.3.zip) |
 
 > [KBEditor Changelog](https://github.com/angelonardone/kbbridge-releases/blob/main/CHANGELOG.md)
 
