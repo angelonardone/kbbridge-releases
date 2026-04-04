@@ -4,6 +4,17 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 
 ---
 
+## 1.2.51 — 2026-04-04
+
+### Sync Engine v1.4.3
+- Added: Variable, Attribute and Domain properties beyond DataType are now serialized and deserialized — validation, picture, control info, appearance, behavior, virtual keyboard, and offline properties are preserved in the roundtrip
+- Fixed: ExternalName, ExternalNamespace and AllowNull properties excluded from Variable/Attribute/Domain serialization — these properties are not applicable in that context and share names with other object types
+
+### Sync Manager v1.2.51
+- No additional changes (Engine binaries update only)
+
+---
+
 ## 1.2.50 — 2026-04-03
 
 ### Sync Engine v1.4.2
