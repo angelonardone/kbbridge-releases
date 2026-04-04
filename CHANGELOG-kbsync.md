@@ -11,7 +11,10 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 - Fixed: ExternalName, ExternalNamespace and AllowNull properties excluded from Variable/Attribute/Domain serialization — these properties are not applicable in that context and share names with other object types
 
 ### Sync Manager v1.2.51
-- No additional changes (Engine binaries update only)
+- Added: Language selector in Trial Registration, Enter License Key, and Buy License forms (defaults to OS language)
+- Added: First-run experience — opens Trial Registration automatically with informational message
+- Fixed: Settings window no longer blocks license warning dialogs
+- Changed: Settings opens on License tab when no valid license is configured
 
 ---
 
