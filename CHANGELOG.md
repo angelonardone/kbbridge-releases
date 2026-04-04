@@ -9,6 +9,38 @@ three independent streams:
 
 ---
 
+## 1.6.0 — 2026-04-04
+
+**Plugins v1.7.26** | **VS Code 1.109.4**
+
+### Plugins
+
+#### v1.7.26 — 2026-04-04
+- Added: [core] GeneXus keywords in autocompletion (EndNew, EndIf, For Each, Do While, etc.)
+- Added: [core-lib] Compound keywords and completion exclusions in gx-keywords-config.json
+- Fixed: [core-lib] Cleaned up keywords config — removed non-existent keywords, added missing ones
+
+#### v1.7.25 — 2026-04-03
+- Added: [visual-editor] Extended properties for Variables (~50 extra from config), Attributes, and Domains
+- Added: [visual-editor] `mergePropertySchemas()` for combining schema + config properties
+- Added: [visual-editor] `IsInForm` calculated property, `ObjectType` from filename, `ExternalName` for APIs
+- Added: [visual-editor] DataType-based and ControlType-based conditional property visibility
+- Added: [visual-editor] Readonly conditions for Domain/Supertype-based properties
+- Added: [config] `variableProperties` section with 9 shared property groups
+- Added: [config] `Blob`, `GeoLine`, `GeoPolygon` types in gx-methods-config.json
+- Fixed: [visual-editor] readonlyIf evaluates against defaults, Custom type as readonly, Color as string
+- Fixed: [config] DKL_ internal properties hidden, category/default corrections
+
+### Platform
+- Added: Error Lens (usernamehw.errorlens) pre-installed — displays inline error/warning messages next to code (open-source, MIT license)
+- Changed: Updated shared configs (gx-keywords, gx-methods, gx-properties)
+- Changed: Updated visual-editor VSIX schema (variable.json)
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
 ## 1.5.3 — 2026-04-03
 
 **Plugins v1.7.25** | **VS Code 1.109.4**
