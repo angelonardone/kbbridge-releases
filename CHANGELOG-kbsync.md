@@ -9,12 +9,16 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 ### Sync Engine v1.4.3
 - Added: Variable, Attribute and Domain properties beyond DataType are now serialized and deserialized — validation, picture, control info, appearance, behavior, virtual keyboard, and offline properties are preserved in the roundtrip
 - Fixed: ExternalName, ExternalNamespace and AllowNull properties excluded from Variable/Attribute/Domain serialization — these properties are not applicable in that context and share names with other object types
+- Fixed: Variable ExternalName (idVarServiceExtName) now serializes independently of DataType — previously was only exported when the variable had a non-default type
+- Fixed: Removed debug output during External Object export that printed property DataType details to console
 
 ### Sync Manager v1.2.51
 - Added: Language selector in Trial Registration, Enter License Key, and Buy License forms (defaults to OS language)
 - Added: First-run experience — opens Trial Registration automatically with informational message
 - Fixed: Settings window no longer blocks license warning dialogs
 - Changed: Settings opens on License tab when no valid license is configured
+- Fixed: Tray menu now updates immediately when adding or removing Knowledge Bases (no restart needed)
+- Changed: GeneXus version dropdown now shows newest versions first
 
 ---
 
