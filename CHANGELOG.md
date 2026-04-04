@@ -9,6 +9,16 @@ three independent streams:
 
 ---
 
+## 1.6.1 — 2026-04-04
+
+**Plugins v1.7.26** | **VS Code 1.109.4**
+
+### Platform
+- Added: "Buy a License" link on registration page — opens purchase page with user data (name, company, email, language, machine fingerprint, version, platform, arch) as URL parameters for payment processor integration
+- Fixed: Start menu folder now correctly shows "KBbridge" (shared with KBSync) instead of "KBEditor"
+
+---
+
 ## 1.6.0 — 2026-04-04
 
 **Plugins v1.7.26** | **VS Code 1.109.4**
