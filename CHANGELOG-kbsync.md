@@ -19,6 +19,8 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 - Changed: Settings opens on License tab when no valid license is configured
 - Fixed: Tray menu now updates immediately when adding or removing Knowledge Bases (no restart needed)
 - Changed: GeneXus version dropdown now shows newest versions first
+- Changed: Buy License now opens the purchase page in the browser with pre-filled user data
+- Added: "Check License" button appears after Buy License or paid activation to manually retrieve license updates from the server
 
 ---
 
