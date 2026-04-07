@@ -4,6 +4,30 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 
 ---
 
+## 1.2.53 — 2026-04-07
+
+### Sync Engine
+
+#### v1.4.5 — 2026-04-07
+- Fixed: Variable internalization now correctly creates and types variables that did not previously exist in the Knowledge Base — domain-based, attribute-based, SDT, ExternalObject, BusinessComponent and simple-typed variables are all properly applied
+- Fixed: Business Component variables are now recognized on import via the `BusinessComponent:` prefix, restoring the round-trip with the export change introduced in v1.4.4
+- Fixed: Bulk export no longer aborts when the Knowledge Base does not register one of the queried object types — unknown types are now silently skipped instead of throwing
+- Fixed: Variable serialization no longer fails when the variable does not expose the `idVarServiceExtName` (Web Service External Name) property
+- Fixed: Object export now reports a `Fail` line with the underlying error reason whenever an unhandled exception is raised by the GeneXus SDK during serialization
+
+#### v1.4.4 — 2026-04-06
+- Fixed: Business Component variables (based on a Transaction or Transaction sublevel) are now exported with a `BusinessComponent:` prefix followed by the Transaction name (and sublevel using dot notation) — previously they were serialized as the invalid raw type `#GX_BUSCOMP` / `#GX_BUSCOMP_LEVEL`
+
+### Sync Manager
+
+#### v1.2.53 — 2026-04-07
+- Fixed: Suppressed StringTemplate noise (LayoutToHtml.stg) from console output when using GeneXus X Evo3
+
+#### v1.2.52 — 2026-04-06
+- No additional changes (Engine binaries update only)
+
+---
+
 ## 1.2.51 — 2026-04-04
 
 ### Sync Engine v1.4.3
