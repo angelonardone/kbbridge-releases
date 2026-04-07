@@ -9,6 +9,26 @@ three independent streams:
 
 ---
 
+## 1.6.2 — 2026-04-06
+
+**Plugins v1.7.27** | **VS Code 1.109.4**
+
+### Plugins
+
+#### v1.7.27 — 2026-04-06
+- Fixed: [server] Method autocompletion no longer adds parentheses to SDT fields and properties
+- Fixed: [validator] Undeclared variable check now case-insensitive
+- Fixed: [visual-editor] Duplicate property block creation prevented for reference properties
+- Added: [core-lib] "Case" keyword added to autocompletion suggestions
+
+### Platform
+- Changed: Updated shared config gx-keywords-config.json
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
 ## 1.6.1 — 2026-04-04
 
 **Plugins v1.7.26** | **VS Code 1.109.4**
