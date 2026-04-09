@@ -9,6 +9,77 @@ three independent streams:
 
 ---
 
+## 1.6.6 — 2026-04-08
+
+**Plugins v1.7.29** | **VS Code 1.109.4**
+
+### Plugins
+
+#### v1.7.29 — 2026-04-08
+- Added: [core] File badge "AP" for `.API.gxSource` files in Explorer (was previously showing generic "GX")
+
+#### v1.7.28 addendum — 2026-04-08
+- Fixed: [validator, core-lib] Variable lookups in `methodValidator`, `parameterValidator` and `parameterParser` are now consistently case-insensitive — variables declared as `Cookie` are correctly resolved when referenced as `&cookie` (and vice versa)
+
+### Platform
+- No platform changes (bundle rebuilt with v1.7.29)
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged; verified in-process registration uses Electron + `ELECTRON_RUN_AS_NODE=1` (fix from 1.6.3 still in place)
+
+---
+
+## 1.6.5 — 2026-04-08
+
+**Plugins v1.7.28** | **VS Code 1.109.4**
+
+### Platform
+- Removed: Windows portable ZIP artifact (`KBEditor-win32-x64-*.zip`). Users who extracted the ZIP to custom folders (e.g. paths containing spaces) hit install-path edge cases that broke MCP server configuration and `.mcp.json` path resolution. Only the User Setup and System Setup installers are now published for Windows — both install to a predictable, space-free path under `Programs\KBbridge\`.
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
+## 1.6.4 — 2026-04-07
+
+**Plugins v1.7.28** | **VS Code 1.109.4**
+
+### Plugins
+
+#### v1.7.28 — 2026-04-07
+- Fixed: [core] "Go to Definition" on `BusinessComponent:`, `Attribute:` or `Domain:` reference prefixes — now navigates to the referenced Transaction/Attribute/Domain file (also supports module path: `BusinessComponent:Name, Module.Path`)
+- Added: [core-lib, visual-editor, validator] BusinessComponent variables support — variables can now be based on `BusinessComponent:TransactionName` (also with sub-structures and module path: `BusinessComponent:Name.SubLevel, Module.Path`)
+- Added: [visual-editor] "Business Component" property in GX Properties for variables — autocompletes only Transactions with `BusinessComponent = 'True'` enabled
+- Added: [core-lib] Business Component methods documented in `gx-methods-config.json` — `Load`, `Save`, `Insert`, `Update`, `InsertOrUpdate`, `Delete`, `Check`, `Success`, `Fail`, `GetMessages`, `ToXml`, `FromXml`, `ToJson`, `FromJson`, `GetByKey`, `RemoveByKey`, `Mode`
+- Added: [visual-editor] `ElementType` calculated property (`variable` | `attribute` | `domain`) — restricts reference properties (Attribute, SDT, ExternalObject, BusinessComponent) to variables only
+- Fixed: [visual-editor] Type Definition fields hidden when variable is based on a BusinessComponent
+- Fixed: [visual-editor] GX Properties detects `#Variables [dynamic]` and `#Variables [readonly]` sections — variables shown in readonly mode
+- Fixed: [visual-editor] Reference property placeholders hidden when property is in readonly mode
+
+### Platform
+- No platform changes (bundle rebuilt with v1.7.28)
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
+## 1.6.3 — 2026-04-07
+
+**Plugins v1.7.27** | **VS Code 1.109.4**
+
+### Platform
+- Fixed: GeneXus Knowledge MCP server failed with "MCP error -32000: Connection closed" on machines without a system Node.js in PATH. The in-process `registerMcpServerDefinitionProvider` now uses KBEditor's bundled Electron binary with `ELECTRON_RUN_AS_NODE=1`, matching the auto-generated `.vscode/mcp.json` / `.mcp.json` configs.
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
 ## 1.6.2 — 2026-04-06
 
 **Plugins v1.7.27** | **VS Code 1.109.4**
