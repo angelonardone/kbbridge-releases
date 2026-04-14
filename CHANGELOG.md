@@ -9,6 +9,63 @@ three independent streams:
 
 ---
 
+## 1.6.8 — 2026-04-14
+
+**Plugins v1.7.32** | **VS Code 1.109.4**
+
+### Plugins
+
+#### v1.7.32 — 2026-04-14
+- Fixed: [validator, server, core-lib] Nested SDT references with module qualifiers now fully supported — fields like `&Var.AccessTokenSDT.ExpiresIn` where the SDT has a module-qualified DataType (`AccessTokenSDT, PXTools.OAuthConsumer`) are no longer flagged as invalid
+- Fixed: [server] Autocompletion for chained SDT field access no longer blocked by early GeneXus object detection — `&Var.SDTField.` now correctly shows sub-fields instead of returning empty results
+- Fixed: [validator] Level name lookup in `getSDTFieldType` is now case-insensitive
+
+### Platform
+- No platform changes (bundle rebuilt with v1.7.32)
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged; verified Electron + `ELECTRON_RUN_AS_NODE=1` in place
+
+---
+
+## 1.6.7 — 2026-04-13
+
+**Plugins v1.7.31** | **VS Code 1.109.4**
+
+### Plugins
+
+#### v1.7.31 — 2026-04-13
+- Added: [sync-status] `gxSync.trackExternalChanges` setting (default: `false`) — enables/disables tracking of changes made to GeneXus source files outside of VSCode (e.g., by an external AI CLI). Changes from GeneXus IDE via KBBridge are always excluded.
+- Added: [sync-status] Settings tab in Sync Panel — gear icon next to tabs opens a configuration panel with toggle switch for `trackExternalChanges`
+- Added: [sync-status] Directory snapshot rebuild on enable — when `trackExternalChanges` is enabled, the file snapshot is rebuilt so only changes made after that moment are detected
+- Fixed: [core-lib] `Count` in `collectionMethods` changed from Method to Property — `&Col.Count` no longer flagged as requiring parentheses
+- Fixed: [validator] Variables with `Collection = 'True'` now correctly support collection methods (`.Count`, `.Item()`, `.Add()` etc.)
+- Refactored: [validator] `buildVariablesMap()` returns `Map<string, VarInfo>` with `{ name, dataType, isCollection }` — eliminates fragile `VARCOLLECTION:` prefix hack
+- Refactored: [core-lib, server, validator, core] Renamed `formControlProperties` to `formControls` and `autonomousControlProperties` to `autonomousControls`
+- Fixed: [sync-status] `isKBBridgeExport()` path comparison normalizes double slashes and backslashes — exported objects no longer incorrectly registered as external changes
+
+#### v1.7.30 — 2026-04-09
+- Added: [core-lib, server, validator] Complete PEM for form controls (variables in Form) — common members for all controls plus ControlType-specific members (Edit, Combo Box, Check Box, List Box, Image, etc.)
+- Added: [core-lib, core, server] Complete PEM for autonomous controls — TextBlock, Button, Grid, Image, Table, WebComponent, UserControl with methods and properties parsed from `.gxForm`
+- Added: [core-lib] `getFormControls()` and `getFormControlInfo()` — parse `.gxForm` to extract ControlNames and ControlTypes
+- Added: [core-lib] HttpRequest missing properties (ScriptName, QueryString, ServerHost, etc.) and Cookie property corrections
+- Fixed: [server] `loadGxMethodsConfig()` now includes `formControls`, `businessComponentMethods`, and `autonomousControls`
+
+### Platform
+- Fixed: `build-bundle.py` now refreshes compiled `genexus-language-core-lib` into all dependents' `node_modules` before compilation — prevents stale `file:` dependency links from causing tsc failures when core-lib gains new exports
+- Updated: sync-status VSIX skeleton with new `gxSync.trackExternalChanges` setting
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged; verified in-process registration uses Electron + `ELECTRON_RUN_AS_NODE=1`
+
+---
+
 ## 1.6.6 — 2026-04-08
 
 **Plugins v1.7.29** | **VS Code 1.109.4**
