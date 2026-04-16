@@ -9,6 +9,37 @@ three independent streams:
 
 ---
 
+## 1.6.9 — 2026-04-16
+
+**Plugins v1.7.34** | **VS Code 1.109.4**
+
+### Plugins
+
+#### v1.7.34 — 2026-04-16
+- Added: [core-lib] GeneXus version support — `kb-config.json` file in workspace declares `genexusVersion`; methods/properties/keywords filtered by `since` field; absent file assumes latest version
+- Added: [core-lib] New module `config/kbConfig.ts` with `loadKBConfig()`, `parseGXVersion()`, `isFeatureAvailable()`, `filterByVersion()`
+- Added: [core-lib] `since` field added to 150+ entries across `gx-methods-config.json`, `gx-keywords-config.json`, `gx-functions-config.json`, `gx-properties-config.json`
+- Fixed: [validator] Third chain validation now resolves initial type before chain resolution — `&Var.ToString().Trim()` no longer flags Trim as invalid
+- Fixed: [core-lib] Several returnType corrections (MailMessage.ReplyTo, Boolean.ToString, Numeric.IsEmpty); typo ChartAt → CharAt
+- Added: [core-lib] Many missing members: POP3Session, MailRecipientCollection, DateTime.AddDays, Character.Split/ToDate/ToDateTime, File.* (Open/Close/ReadLine/etc.), Directory.*, OutlookSession.*, DBConnection.*, sdt/collection ToJsonFile/ToXmlFile
+- Fixed: [validator] `resolveDataType` now recursively resolves chained domains
+
+#### v1.7.33 — 2026-04-15
+- Fixed: [parser, analyzer] `For Each` with qualified transaction names (`Module.Transaction`) now correctly recognized — grammar `baseTrnClause` supports multi-level module paths
+- Fixed: [core-lib] Chained property access on built-in types resolves return types — `&SMTPSession.Sender.Name` no longer flags Name as invalid
+- Added: [core-lib] `MailRecipientCollection` missing members (New, Count, Item)
+
+### Platform
+- No platform changes (bundle rebuilt with v1.7.34)
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged; verified Electron + `ELECTRON_RUN_AS_NODE=1` in place
+
+---
+
 ## 1.6.8 — 2026-04-14
 
 **Plugins v1.7.32** | **VS Code 1.109.4**
