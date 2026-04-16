@@ -4,6 +4,23 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 
 ---
 
+## 1.2.54 — 2026-04-16
+
+### Sync Engine
+
+#### v1.4.8 — 2026-04-16
+- Added: KBbridge Sync Engine now generates a `kb-config.json` file in the workspace root containing the GeneXus version of the KB — this file is consumed by VSCode extensions to filter properties and keywords by version
+- Changed: The `gx-properties-config.json` parser now tolerates the new optional `since` field on property definitions without errors
+- Fixed: Source file parser no longer crashes with "Index was outside the bounds of the array" when parsing structures with certain blank line patterns — a missing parenthesis in 6 blank-line-skip loops caused array access beyond bounds
+
+#### v1.4.7 — 2026-04-15
+- Fixed: Module path deduction from qualified names no longer truncates module names that contain the object name as a substring — previously, objects like `Factura` inside module `eFactura` would cause the module to appear as `@e`, and `SendMail` inside `PXTools.SendMails` would produce a spurious `@PXToolss` module
+
+#### v1.4.6 — 2026-04-13
+- Fixed: Domain paths in the exports registry file now use the correct single separator — previously, Domains inside modules were written with a double slash (e.g. `@Module//#Domains/`) causing the sync engine to treat recently exported objects as external changes requiring internalization
+
+---
+
 ## 1.2.53 — 2026-04-07
 
 ### Sync Engine
