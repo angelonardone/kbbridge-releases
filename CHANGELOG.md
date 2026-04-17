@@ -9,6 +9,33 @@ three independent streams:
 
 ---
 
+## 1.6.10 — 2026-04-17
+
+**Plugins v1.7.35** | **VS Code 1.109.4**
+
+### Plugins
+
+#### v1.7.35 — 2026-04-17
+- Fixed: [core-lib] CRITICAL — `loadKeywordsConfig` crash when keywords use versioned object format `{"name":"Panel","since":"15.0"}`. The loader called `.toLowerCase()` on the object instead of extracting the `name` field first, preventing activation of genexus-language-core and all dependent extensions (Analyzer, Validator, Controller, Visual Editor).
+
+#### v1.7.34 addendum — 2026-04-17
+- Added: [visual-editor] GX Properties panel now filters properties by GeneXus version — reads `kb-config.json` and hides properties with `since` greater than the KB's version
+
+### Platform
+- Added: Update notification — license-manager checks GitHub Releases once per day, shows notification when a newer version is available (Download → kbbridge.com/download, Release Notes → kbbridge.com/changelog, Skip This Version). Opt-out via `kbbridge.checkForUpdates` setting. Manual check via Command Palette: `KBEditor: Check for Updates`.
+- Added: Two-step staged release flow — `kbbridge-release` builds all 3 OS in parallel (single click, draft); `kbbridge-publish-verify` + `kbbridge-publish` replace manual publishing (auto-detect version from `version.json`).
+- Fixed: Buy-license URL now sends KBEditor version (e.g. `1.6.9`) instead of VS Code version (`1.109.4`).
+- Fixed: Bundle cache invalidation — was keyed by VS Code version (constant across KBEditor releases, never invalidated). Now keyed by KBEditor version.
+- Fixed: About dialog shows `KBEditor 1.6.10 (VS Code 1.109.4)` via product.json `kbEditorVersion` field + patch. `package.json` stays at VS Code version for extension compatibility.
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged; verified Electron + `ELECTRON_RUN_AS_NODE=1` in place
+
+---
+
 ## 1.6.9 — 2026-04-16
 
 **Plugins v1.7.34** | **VS Code 1.109.4**
