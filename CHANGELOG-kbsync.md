@@ -4,6 +4,18 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 
 ---
 
+## 1.2.56 — 2026-04-18
+
+### Sync Engine
+
+#### v1.4.10 — 2026-04-18
+- Fixed: SDT root level `Collection` / `CollectionItemName` properties are now applied during internalization — when the SDT itself is a collection these were ignored, because the property block of the root structure node was never read. Also reconciles sublevel `Collection` / `CollectionItemName` on every re-import, not just on creation
+
+#### v1.4.9 — 2026-04-17
+- Fixed: SDT sublevel internalization now correctly applies the `Collection` and `CollectionItemName` properties when the sublevel is created for the first time — previously, sublevels marked as `Collection = True` in the `.gxSource` were created without the collection flag
+
+---
+
 ## 1.2.54 — 2026-04-16
 
 ### Sync Engine
