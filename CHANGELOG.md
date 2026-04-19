@@ -9,6 +9,29 @@ three independent streams:
 
 ---
 
+## 1.6.11 — 2026-04-18
+
+**Plugins v1.7.36** | **VS Code 1.109.4**
+
+### Plugins
+
+#### v1.7.36 — 2026-04-18
+- Fixed: [analyzer, validator] `.gxPattern` and `.gxChilds` files are no longer parsed as GeneXus source code — these files share the `genexus` language ID but are not parseable code, causing false syntax errors
+- Fixed: [visual-editor] "Save Object As..." now correctly updates the object name for `SDT` and `API` files
+- Changed: [sync-status] `gxSync.trackExternalChanges` default changed from `false` to `true` — external change tracking enabled by default
+
+### Platform
+- Fixed: Bundle download failing on system installer (`C:\Program Files\KBbridge\`). The bundle was saved to `extensionPath` which is read-only for non-admin users. Now saved to `globalStoragePath` (`%AppData%\kbbridge\`) which is always writable.
+- Updated: sync-status VSIX skeleton with `trackExternalChanges` default = `true`
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged; verified Electron + `ELECTRON_RUN_AS_NODE=1` in place
+
+---
+
 ## 1.6.10 — 2026-04-17
 
 **Plugins v1.7.35** | **VS Code 1.109.4**
