@@ -4,6 +4,17 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 
 ---
 
+## 1.2.57 — 2026-04-23
+
+### Sync Engine v1.4.11
+- Fixed: On GeneXus X, XEv1, XEv2 and XEv3, the sync JSON files (changes, status, exports) no longer grow exponentially on each write — previously, every read/modify/write cycle doubled the number of entries because the files were serialized with two arrays per list (one for the underlying field, one for the public property), and the deserializer appended both to the same list. A few write cycles sufficed to exhaust process memory
+- Fixed: Export notifications registry no longer causes `OutOfMemoryException` when the file grows to excessive sizes — if the file exceeds 10 MB or cannot be parsed, it is automatically quarantined as `.corrupted-<timestamp>.bak` and a fresh one is created. The periodic cleanup on startup and every register operation now cap the in-memory entry list to prevent unbounded growth between cleanups
+- Fixed: A failure while writing the export notifications registry no longer terminates the sync process — the error is logged as a warning and the sync continues
+- Fixed: On GeneXus X, XEv1, XEv2 and XEv3, bulk export start/end markers in the export notifications registry are now written with the correct `changeType` value — previously they were always written as `"modified"`, making it impossible for consumers of the registry to distinguish bulk export boundaries from per-object change notifications
+- Fixed: On GeneXus X, XEv1, XEv2 and XEv3, import status messages are now written with the correct `type` value (`error`, `warning`, `info`) — previously all message types were silently overwritten as `"error"`
+
+---
+
 ## 1.2.56 — 2026-04-18
 
 ### Sync Engine
