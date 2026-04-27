@@ -9,6 +9,22 @@ three independent streams:
 
 ---
 
+## 1.6.12 — 2026-04-27
+
+**Plugins v1.7.36** | **VS Code 1.109.4**
+
+### Platform
+- Fixed: System installer (admin) — non-admin users could not load extensions due to EPERM writing to `C:\Program Files\KBbridge\`. Bundle loading now gracefully handles read-only extension directories: JS code loads from in-memory sourceCache, webview/schema files use the VSIX skeleton from install time.
+- Fixed: Bundle download on system installer — now saves to user-writable `%AppData%\kbbridge\` instead of the read-only install directory (from v1.6.10).
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged; verified Electron + `ELECTRON_RUN_AS_NODE=1` in place
+
+---
+
 ## 1.6.11 — 2026-04-18
 
 **Plugins v1.7.36** | **VS Code 1.109.4**
