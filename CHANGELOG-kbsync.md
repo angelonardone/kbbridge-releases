@@ -4,6 +4,31 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 
 ---
 
+## 1.2.61 — 2026-04-30
+
+### Sync Engine
+
+#### v1.4.15 — 2026-04-30
+- Fixed: Internalization of a brand-new Panel object no longer aborts with `Root element is missing` — the engine read the panel's variables from an XML attribute that does not yet exist on a freshly created panel, throwing `XmlException` and aborting the import. The variable reader now treats a missing or empty `variables` attribute as "no variables", and the form reader is equally robust against an uninitialized layout. In addition, the panel is persisted once at the start of source deserialization so the underlying KMW pattern-part skeleton exists before rules, events, conditions and form are written into it — without this initial save, all four sections were silently dropped on creation, producing an empty panel even when the import reported success. Available on GeneXus 17 and 18
+
+#### v1.4.14 — 2026-04-29
+- Fixed: Internalization of new Panel objects no longer fails with the generic error `Could not create object: Panel <name>` — previously, importing a `.Panel.gxSource` whose object did not yet exist in the Knowledge Base produced a silent failure because Panel creation was not implemented in the object factory. Panels are now created on demand during import using the GeneXus generic object factory, so a fresh Panel can be internalized end-to-end without first creating it manually in the IDE. Supported on GeneXus XEv2, XEv3, 15, 16, 17 and 18
+- Added: Internalization now creates PatternInstance objects on demand for any pattern installed in the GeneXus environment — the pattern type is detected from the `.gxPattern` filename and resolved against the registered pattern definitions, so `.<TypeName>.gxPattern` files for any installed pattern can be imported end-to-end without first creating the instance manually in the IDE. Available on every supported GeneXus version
+- Improved: Import error messages distinguish between three failure modes — the type is not registered in the Knowledge Base, the GeneXus factory rejected the create request, and unknown header type — so the diagnostic points to the actionable cause
+
+#### v1.4.13 — 2026-04-28
+- Fixed: Pattern definitions and User Controls export no longer crashes with `UriFormatException: Invalid URI: The hostname could not be parsed` when long path support is enabled in Sync Settings — the relative-path computation that previously relied on `System.Uri` could not parse paths prefixed with `\\?\`. The path is now computed by direct string comparison, which also makes the export robust against file or folder names containing characters that the URI parser handles specially (such as `#`)
+- Fixed: Variable internalization no longer writes the `Collection` property explicitly as `False` on non-collection variables — the property is now only updated when its current value differs from what the source file declares. Forcing `Collection = False` on every import marked the property as user-defined (instead of leaving it at its default), causing spurious dirty state on variables that never were collections. Switching a variable from collection to non-collection (and vice versa) still works as expected
+- Added: Sync iterations that produce a burst of exports now bracket the burst with `sync-batch-start` and `sync-batch-end` markers in the exports JSON file, analogous to the existing `bulk-export-start`/`bulk-export-end` markers used for the very first export. The new markers fire on the first iteration after startup whenever there is at least one pending change (covering the case of resuming a sync that was paused for hours or days) and on any later iteration whose pending count reaches the new `SyncBatchMarkerThreshold` setting (default 5). External tools that import file changes — for example, the KB Editor sync component — can pause their file-system watcher for the duration of each marked window to avoid mistaking KBBridge's own exports for external edits. Orphaned `*-start` markers from an interrupted run are auto-closed at startup, independently per marker family
+
+#### v1.4.12 — 2026-04-26
+- Added: External User Controls are now exported to a new `User Controls/` folder in the project — for each User Control installed in the GeneXus environment, the design-time files (`.control` manifests, properties XML, render XSL, toolbox icons, and images) are copied preserving the original folder structure. Vendor packs that group several controls under a single folder (e.g. `DVelop/`) are exported as a single tree retaining all `.control` files at the root and their referenced asset subfolders. Runtime material (`.js`, `.css`, `.dll`, etc.) is excluded. Copies are idempotent — only files newer than the destination are overwritten
+
+### Sync Manager v1.2.58
+- Changed: About tab now shows the Sync Engine changelog by default instead of the Sync Manager changelog
+
+---
+
 ## 1.2.57 — 2026-04-23
 
 ### Sync Engine v1.4.11
