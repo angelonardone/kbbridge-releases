@@ -9,6 +9,227 @@ three independent streams:
 
 ---
 
+## 1.7.2 — 2026-05-04
+
+**Plugins v1.8.14** | **VS Code 1.109.4**
+
+> Bug-fix release. Notable: a regression that rebuilt the reference index from scratch on every reload (causing several minutes of editor freeze on 10k-object KBs) is fixed. Several validator / analyzer false errors are also resolved.
+
+### Plugins
+
+#### v1.8.14 — 2026-05-03
+- Fixed: [language-core] Reference index of a large Knowledge Base no longer rebuilds from scratch on every "Developer: Reload Window" — the persisted index was being rejected by a hardcoded version check. Several minutes of editor freeze gone on 10k-object KBs from the second reload onwards
+- Fixed: [language-validator] No more false "is not a valid data type" errors on `DataType = 'Attribute:<AttrName>'` when the referenced attribute lives in an external module
+- Fixed: [language-analyzer] No more false "Mismatched input '=' expecting '('" errors on `<ControlName>.<Property> = <value>` lines inside `#Rules` (e.g. `EmisorId.Visible = False;`)
+- Fixed: [language-validator] No more false "Udp call requires last parameter to be mode 'out' or 'inout'" errors on calls to a DataProvider — DataProviders declare their output via `Output = '<Type>'` / `Collection`, not via `parm()`. The parser now synthesizes a virtual `out` parameter for DP calls
+- Fixed: [language-validator] No more false "is not a valid method" errors on `IsEmpty()` / `SetEmpty()` / `ToString()` of variables typed by an enumerated domain
+- Fixed: [language-validator] No more false "Parameter requires a variable (mode: inout)" warnings on calls that pass `<Control>.<Property>` (or any dotted lvalue) as an `out` / `inout` argument
+- Fixed: [language-analyzer] No more false "Mismatched input '{' expecting {'.', '='}" errors on DataProvider blocks whose nested SDT level names are GeneXus keywords (e.g. `Display`, `Group`, `Default`, `Domain`, `Attribute`, `Insert`, `Update`, `Delete`)
+- Changed: [visual-editor] The `Title` property of a Grid Column is now shown at the top of GX Properties (next to `Attribute`), matching the GeneXus IDE order
+
+### Platform
+- Bundle rebuilt with updated plugin code: 707 JS files, 1.8 MB.
+- Bundle must be uploaded to `keygenapi.kbbridge.com` after this release.
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged; verified Electron + `ELECTRON_RUN_AS_NODE=1` in place
+
+---
+
+## 1.7.1 — 2026-05-03
+
+**Plugins v1.8.13** | **VS Code 1.109.4**
+
+> Plugin code update: the upstream `v1.8.13` entry was extended with 17 additional fixes and features (no version bump on the plugin side). Bundle rebuilt to incorporate them.
+
+### Plugins
+
+#### v1.8.13 — additional fixes (appended 2026-05-03)
+- Added: [visual-editor] The `Values` property of a Combo Box / Radio Button / List Box now opens a visual editor with two columns (Name, Value), with add / remove / reorder, validations and serialization to the `Name1:Value1,...` format used in the `ControlValues` XML attribute
+- Added: [visual-editor] `Checked Value` and `Unchecked Value` properties of a Check Box are now shown in GX Properties, written to `ControlCheckValue` / `ControlUnCheckValue` (HTML) or packed in `PATTERN_ELEMENT_CUSTOM_PROPERTIES` (Abstract / MultiForm / SDPanel)
+- Added: [visual-editor] Keyboard shortcuts in the `Values` editor — `Alt+A` add, `Delete` remove, `Alt+↑` / `Alt+↓` reorder, `↑` / `↓` select, `Enter` edit
+- Fixed: [visual-editor] Radio Button now renders as a real radio control on the canvas even when values cannot be deduced from a domain or source code
+- Fixed: [visual-editor] Combo Box, Radio Button and List Box now render their static `ControlValues` from the XML on the canvas (previously only enum-domain or `&Var.Add(...)` values were used)
+- Fixed: [visual-editor] List Box now renders as a multi-line scrollable list (`<select size>`), distinguishable from Combo Box. Same applies to Dynamic List Box
+- Fixed: [visual-editor] Combo Box on the canvas now shows the empty item declared by `Add Empty Item` / `Empty Item Text`
+- Fixed: [visual-editor] Drag from the GX Toolbox to the form canvas now works regardless of which tab is active (the activation message is broadcast to every open form-editor webview)
+- Fixed: [visual-editor] Drag from the GX Toolbox no longer fails when the form-editor webview was suspended by VSCode — visible panels are explicitly woken up on drag start (`panel.reveal` with `preserveFocus: true`)
+- Fixed: [visual-editor] Dragging a row inside a nested table now reorders within that table instead of selecting the parent table — handler retries `inside` when `before`/`after` is rejected
+- Fixed: [visual-editor] Drop position of a drag inside a nested table now matches the visual indicator (the `drop` handler now applies the same retry logic as `dragover`)
+- Fixed: [visual-editor] The horizontal "drop here" line between rows is back when dragging a row by its handle — `dragover`/`drop` handlers retry `before` / `after` when the original `inside` is rejected
+- Fixed: [visual-editor] Reordering rows in HTML tables now respects the `<TBODY>` wrapper — canvas ascends through `<TBODY>` / `<THEAD>` / `<TFOOT>` when computing the effective parent, and row inserts targeting `<TABLE>` directly are redirected into its `<TBODY>`
+- Fixed: [visual-editor] Drop of a row inside a `<TBODY>` now actually completes the move — `acceptsAsChild` validator now treats `<TBODY>` / `<THEAD>` / `<TFOOT>` as equivalent to `<TABLE>` for child acceptance
+- Fixed: [visual-editor] Reordering Grid Columns now shows a vertical drop indicator between columns during the drag (instead of a horizontal one)
+- Fixed: [visual-editor] HTML `<DIV>` containers no longer stretch to fill the available height and hide their next siblings — User Control regions still fill height, HTML `<DIV>` grows to fit content
+- Changed: [visual-editor] "Delete Layout" confirmation dialog of a Smart Device Panel now shows the layout's readable name (e.g. `Default`, `iPhone · Portrait`) instead of its internal GUID
+
+### Platform
+- Bundle rebuilt with updated plugin code: 707 JS files across 7 extensions; bundle size 1.8 MB.
+- Bundle must be uploaded to `keygenapi.kbbridge.com` after this release.
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged; verified Electron + `ELECTRON_RUN_AS_NODE=1` in place
+
+---
+
+## 1.7.0 — 2026-05-02
+
+**Plugins v1.8.13** | **VS Code 1.109.4**
+
+> **Major plugin update**: introduces the **Visual Form Editor** for `.gxForm` files (WYSIWYG rendering, drag & drop, GX Properties panel, responsive layouts, multi-layout support for Smart Device Panels, User Control discovery and rendering). 14 plugin versions consolidated since the last KBEditor release.
+
+### Plugins
+
+#### v1.8.13 — 2026-05-02
+- Fixed: [visual-editor] `Control Name` of a `<table>` in Abstract Layout / MultiForm / Smart Device Panel now shows the actual control name instead of the internal GUID
+- Fixed: [visual-editor] Tables, rows, cells, sections, grids, tabs, tab pages, grid columns and groups inserted into Smart Device Panels now carry the `id="<GUID>"` attribute that the GeneXus IDE writes
+- Fixed: [visual-editor] The "Group" container in Abstract Layout / Smart Device Panel now serializes as `<group>` (was `<section>`)
+- Changed: [visual-editor] Cleanup of legacy properties when changing Control Type to a different User Control is now near-instant (single-pass instead of O(n²))
+- Changed: [visual-editor] Cloning a layout via "Add Layout (Copy from existing)" no longer regenerates the `id` of internal regions of User Controls
+- Changed: [visual-editor] Smart Device Panel detection now uses the XML root tag (`<layouts>`) instead of the file path
+- Added: [visual-editor] Output channel logs a warning when a Smart Device Panel is opened with structural nodes missing `id="<GUID>"`
+
+#### v1.8.12 — 2026-05-01
+- Added: [language-core, visual-editor] One-click navigation between a `.gxSource` and its matching `.gxForm` (clickable link, title-bar icon, "Source" button in Form Editor)
+- Added: [visual-editor] Multi-Layout support for Smart Device Panels — tabs at the top of the canvas switch between layouts; each layout edited independently
+- Added: [visual-editor] "Add Layout" wizard with cascading variant selectors (Platform → Device Kind → Size → Version → Orientation) plus "Empty / Copy from existing"
+- Added: [visual-editor] Adaptive overflow for the layout switcher — folded into a `…` button when toolbar width is insufficient
+- Added: [visual-editor] Right-click "Delete Layout" on a layout tab (last layout cannot be deleted)
+- Changed: [visual-editor] "Text" button label now reflects the form's real format ("HTML" for Layout HTML, "XML" for Abstract / MultiForm)
+
+#### v1.8.11 — 2026-04-30
+- Added: [visual-editor] User Controls can be inserted from the Toolbox in Abstract Layout and MultiForm forms (initial container regions of `gxui.Layout`, `gxui.Panel` etc. added automatically)
+- Added: [visual-editor] Responsive Sizes visual editor available from PXTools pattern instances (PXWorkWith, PXComposer, PXParameterRequest)
+- Fixed: [visual-editor] Breakpoint selector (XS / SM / MD / LG) now appears for every responsive form, even when no table has explicit responsive sizes yet
+- Fixed: [visual-editor] Responsive Sizes editor never opens with empty data (fallback path removed; timeout extended to 10s)
+- Fixed: [visual-editor] Canvas stacks responsive cells mobile-first at XS even when the table has no `responsiveSizes` JSON
+- Fixed: [visual-editor] Responsive Sizes modal closes automatically when the user selects a different control in the canvas
+- Fixed: [visual-editor] GX Properties clears when the active tab changes
+- Fixed: [visual-editor] `.gxForm` files reliably open with the visual Form Editor (extension auto-adds `.gxForm` and `.gxPattern` mappings on startup)
+- Fixed: [visual-editor] User Controls with container regions render correctly in Abstract Layout and MultiForm forms
+- Fixed: [visual-editor] User Controls in Abstract Layout and MultiForm matched correctly even when the instance was renamed
+
+#### v1.8.10 — 2026-04-29
+- Added: [visual-editor] User Controls can be inserted from the Toolbox in HTML Layout forms (drag or double-click)
+- Added: [visual-editor] Inserting a User Control container creates its initial regions automatically (parsed from the UC's XSL render)
+- Added: [visual-editor] `Control Type` dropdown of an Attribute / Variable now lists every external User Control with `<IncludeInControlInfo>true</IncludeInControlInfo>` (Chosen, CKEditor, Rating, RunJS, SDCalendar, etc.)
+- Added: [visual-editor] Properties of the chosen User Control are merged into the Attribute / Variable panel
+- Added: [language-core] Closing a tab opened from a `.gxChilds` re-opens the QuickPick automatically
+- Added: [sync-status] Support for `sync-batch-start` / `sync-batch-end` markers from the Sync Engine
+- Fixed: [visual-editor] Drop from Toolbox now actually inserts the control (replaced `mousemove`/`mouseup` with `dragover`/`drop`)
+- Fixed: [visual-editor] Smart Device Panels (`*.Panel.gxSource`) now show their object properties in GX Properties (alias-aware: `Panel` ↔ `SDPanel`)
+- Fixed: [visual-editor] Drops on top / bottom 25% of a UC region now succeed (always resolved to "inside")
+- Fixed: [visual-editor] Generic containers expand to fill height with min-height 60px
+
+#### v1.8.9 — 2026-04-28
+- Added: [visual-editor] Object Picker modal for reference properties (Master Page, Web Component, Image, Theme, etc.) with Pattern and Type filters
+- Added: [visual-editor] WYSIWYG render for User Controls with design XSL (e.g. `gxui.Layout` with North/West/Center/East/South)
+- Added: [visual-editor] Hierarchical categories in GX Properties (`Regions/North/North Title Bar`, etc.)
+- Added: [visual-editor] Arrow keys navigate between siblings in horizontal layouts
+- Added: [visual-editor] UC properties declared with `<CustomType>WebComponentReference</CustomType>` etc. exposed as proper references with autocomplete
+- Added: [visual-editor] Object Selector adds a Table filter when picking attributes
+- Fixed: [visual-editor] Reference values that contain a leading GUID are displayed without it
+- Fixed: [visual-editor] Master Page references resolve in the panel (alias `WebMasterPage` → `MasterPage`)
+- Fixed: [visual-editor] Toolbox now uses the IDE's heuristic to filter User Controls (`<IncludeInControlInfo>` flag)
+- Added: [visual-editor] Drag from Toolbox to canvas inserts the control (Button, Text Block, Image, Error Viewer, Web Component, Table, Grid, Group, Tab)
+
+#### v1.8.8 — 2026-04-27
+- Added: [visual-editor] Color picker for color properties (FontColor, BackColor, etc.)
+- Added: [visual-editor] Attribute / Variable picker for User Control properties (ControlAttVarReference)
+- Added: [visual-editor] User Control containers render their internal zones (`gxgxui.Layout` with North / Center / South / East / West)
+- Added: [visual-editor] `Control Name` shown in the General category for User Control instances
+- Fixed: [visual-editor] Responsive sizes preview works when JSON declares fewer cells than the row
+- Fixed: [visual-editor] `<ucw>` controls in Abstract Layout are recognised by the registry (suffix-matching heuristic)
+- Fixed: [visual-editor] `gxControlType` no longer appears as an editable property
+
+#### v1.8.7 — 2026-04-26
+- Added: [visual-editor] External User Controls discovered from the workspace (`<workspace>/User Controls/`)
+- Added: [visual-editor] New command "KBBridge: Show User Controls" — QuickPick of every UC discovered
+- Added: [visual-editor] User Controls show their real name in the form preview, with toolbox icon when declared
+- Added: [visual-editor] `UC` letters as fallback icon
+- Added: [visual-editor] Real properties of a User Control in GX Properties (Width, Height, Attribute, Data, FocusOnLoad, Font, etc.)
+- Changed: [visual-editor] GX Properties header shows `<UC>: <Name>` for User Control instances
+
+#### v1.8.6 — 2026-04-25
+- Added: [visual-editor] Per-property "Restore to Default" in the Responsive Sizes editor (right-click any field)
+- Added: [visual-editor] Auto-distribution of default cell widths
+- Added: [visual-editor] Copy property value from the right-click menu
+- Added: [visual-editor] Add ▸ in Abstract Layout creates a sibling cell automatically
+- Fixed: [visual-editor] Cascade direction matches GeneXus IDE (XS/SM standalone, MD inherits SM, LG inherits MD)
+- Fixed: [visual-editor] `visible:false` cells render alone in their logical row at 100% effective width
+- Fixed: [visual-editor] Two 50% cells of a responsive row no longer wrap
+- Fixed: [visual-editor] Move buttons skip invisible siblings
+- Fixed: [visual-editor] Move persists to the JSON as `move:N` declaratively
+- Fixed: [visual-editor] Reordering at one scale doesn't bleed into the others
+
+#### v1.8.5 — 2026-04-24
+- Added: [visual-editor] Visual Responsive Sizes editor — modal with scale picker (XS/SM/MD/LG), live cell preview and per-cell properties (Width %, Offset %, Move ← →, Visible, Default)
+- Added: [visual-editor] Table Type picker — Tabular, Responsive, Absolute, Flex, SmartTable, Stencil
+- Added: [visual-editor] Default checkbox per cell (resets every override / locks current values as explicit)
+- Changed: [visual-editor] Custom editor inputs are read-only (use `...` button or right-click to copy)
+
+#### v1.8.4 — 2026-04-23
+- Added: [visual-editor] Add Tab Page (right-click → Add ▸ Tab Page)
+- Added: [visual-editor] Drag & drop to rearrange controls (before / after / inside, with validation)
+- Added: [visual-editor] Row drag handle (`≡`) for tables with two or more rows
+- Added: [visual-editor] Sticky header (toolbar, form tabs, breadcrumb stay pinned while scrolling)
+- Changed: [visual-editor] Small drag threshold (1–2px movements ignored)
+- Fixed: [visual-editor] Responsive layout follows the row when reordered
+
+#### v1.8.3 — 2026-04-22
+- Added: [visual-editor] Delete controls from the form preview (right-click Delete or Delete key, with confirmation for non-empty containers)
+- Added: [visual-editor] Cut, Copy, Paste for controls and entire subtrees (Ctrl/Cmd + X/C/V)
+- Added: [visual-editor] Move controls up/down from the keyboard (Ctrl/Cmd + arrows; horizontal layouts use Left/Right)
+- Added: [visual-editor] Insert Attribute / Variable picker (searchable popup with KB attributes and local variables)
+- Added: [visual-editor] Add ▸ submenu on the context menu (Attribute, Button, TextBlock, Image, Error Viewer, Web Component, Table, Row, Cell, Section, Grid, Grid Column, Tab, etc.)
+- Added: [visual-editor] Add Area in MultiForm (creates Area link + referenced Form with empty responsive table)
+- Added: [visual-editor] Smart defaults for new controls (inherit majority-used sibling values)
+
+#### v1.8.2 — 2026-04-21
+- Added: [visual-editor] Many more editable properties in GX Properties (attributes, buttons, text blocks, grids, grid columns, images, tables, sections, fieldsets)
+- Added: [visual-editor] Caption support for attribute controls (text, position, class)
+- Added: [visual-editor] GX Properties now works on Tabs, Tab Pages, Action Groups, Action Group Items, Layouts, Forms, Form references
+- Added: [visual-editor] Title Font as a single collapsible group in grid columns
+- Changed: [visual-editor] Parent properties (Font, Title Font, etc.) start collapsed
+- Fixed: [visual-editor] Form preview updates immediately when a property changes
+- Fixed: [visual-editor] Editing in MultiForm files writes to the correct form
+
+#### v1.8.1 — 2026-04-20
+- Added: [visual-editor] GX Properties for form controls (attributes, text blocks, buttons, error viewers, images, grids, grid columns, web components, tables, rows, cells, fieldsets, divs, body)
+- Added: [visual-editor] Sub-properties shown as collapsible groups
+- Added: [visual-editor] Visibility rules per property (e.g., combo-only properties hidden when control is Edit)
+- Added: [visual-editor] Combo values detected from code (literal values added in code events)
+- Added: [visual-editor] Form references — controls that point to another form are recognised; double-click navigates
+
+#### v1.8.0 — 2026-04-19
+- Added: [visual-editor] **Visual Form Editor for `.gxForm` files** — new editor that renders the form structure visually, supporting all three GeneXus form formats (HTML, Abstract Layout, MultiForm)
+- Added: [visual-editor] WYSIWYG control rendering (text field for Edit, dropdown for Combo, checkbox for true/false, radio buttons for radio domains, calendar icon for Date/DateTime)
+- Added: [visual-editor] Sample data in grid columns
+- Added: [visual-editor] Responsive layout preview (XS / SM / MD / LG)
+- Added: [visual-editor] Tabs for MultiForm files
+- Added: [visual-editor] Clickable breadcrumb
+- Added: [core-lib] Faster initial load — KB indexing starts when a workspace with a Knowledge Base is opened
+- Added: [core-lib] New command "KBBridge: Show Cache Status"
+- Fixed: [core] "Select a child file to open" now opens `.gxForm` files in the Form Editor
+
+### Platform
+- Bundle rebuilt with new plugin code: 707 JS files (up from 640) across 7 extensions; bundle size 1.8 MB.
+- Bundle must be uploaded to `keygenapi.kbbridge.com` after this release.
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged; verified Electron + `ELECTRON_RUN_AS_NODE=1` in place
+
+---
+
 ## 1.6.12 — 2026-04-27
 
 **Plugins v1.7.36** | **VS Code 1.109.4**
