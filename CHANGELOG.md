@@ -9,6 +9,50 @@ three independent streams:
 
 ---
 
+## 1.7.4 — 2026-05-05
+
+**Plugins v1.8.15** | **VS Code 1.109.4**
+
+> Platform fix. Eliminates a Node `DEP0128` deprecation warning that surfaced in user logs (`Invalid 'main' field in '...@kbbridge/genexus-language-core-lib/package.json' of 'out/index.js'`). Functionality was unaffected because Node fell back to legacy resolution, but the warning will become a hard error in future Node versions.
+
+### Platform
+- Fixed: `embed_extensions.sh` was generating `package.json` files for the embedded `@kbbridge/genexus-language-core-lib` with `"main": "out/index.js"`, but the bundle places the compiled JS at the root of that directory (no `out/` subfolder). Changed to `"main": "index.js"`. Also patched the existing local staging copies for consistency.
+- No bundle change in this release — bundle from v1.7.3 (1.8 MB, plugins v1.8.15) is still current.
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged; verified Electron + `ELECTRON_RUN_AS_NODE=1` in place
+
+---
+
+## 1.7.3 — 2026-05-05
+
+**Plugins v1.8.15** | **VS Code 1.109.4**
+
+> **Security release.** Both findings from our v1.7.2 deep code review (XSS in the Values editor, missing XML-escaping in packed properties) have been confirmed fixed by the plugin team. Also adds Free Style Grid support and Find All References / Find Referenced from the right-click menu.
+
+### Plugins
+
+#### v1.8.15 — 2026-05-04
+- **Security:** [visual-editor] Values editor of Combo Box / Radio Button / List Box no longer renders pairs through unsafe HTML interpolation — values are now treated as plain text in every cell. Fixes the XSS finding from our v1.7.2 review (`properties-panel.ts:3849-3852`)
+- **Security:** [visual-editor] Editing a property of a control on Smart Device Panel / Abstract Layout no longer corrupts other properties when any contains `<`, `>` or `&` — the wrapper that stores grouped properties (`PATTERN_ELEMENT_CUSTOM_PROPERTIES`) now XML-escapes name/value individually. Fixes the XML-escaping finding from our v1.7.2 review (`CustomPropertiesDecomposer.ts:163-167, 203-205`)
+- Added: [visual-editor] **Free Style Grid (`<gxFreeStyle>`) is a first-class control in HTML forms** — renders correctly with green border and yellow tint, exposes 24 specific properties (CustomRender, AllowDrop / AllowDrag, RenderingMode, Border, Empty Grid Text, Paging, Allow Collapsing, Record / Page counters, etc.), insertable from the Toolbox, drops of any control on it are redirected to the inner `<TD>` automatically. Abstract / SDPanel forms not covered in this iteration
+- Added: [language-core] **Find All References / Find Referenced from the right-click menu** of any `.gxSource` / `.gxAttribute` / `.gxDomain` — both on the editor tab and on the file in the Explorer. Lists every file that mentions the object (Find All References) and every defining file of the objects this one uses (Find Referenced). Reuses the reference index built at startup — instantaneous after first build
+
+### Platform
+- Bundle rebuilt with v1.8.15 plugin code: 707 JS files, 1.8 MB.
+- Bundle must be uploaded to `keygenapi.kbbridge.com` after this release.
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged; verified Electron + `ELECTRON_RUN_AS_NODE=1` in place
+
+---
+
 ## 1.7.2 — 2026-05-04
 
 **Plugins v1.8.14** | **VS Code 1.109.4**
