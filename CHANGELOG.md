@@ -9,6 +9,44 @@ three independent streams:
 
 ---
 
+## 1.7.5 — 2026-05-08
+
+**Plugins v1.8.18** | **VS Code 1.109.4**
+
+> Bug-fix release consolidating 3 plugin versions (v1.8.16, v1.8.17, v1.8.18). Notable: pattern-instance saves no longer corrupt CDATA blocks / self-closing tags / XML declaration; `.gxForm` round-trips bit-perfect (empty `git diff` on no-op save); duplicate `Pending` entries on saves fixed (Windows path-casing race); several analyzer false errors resolved.
+
+### Plugins
+
+#### v1.8.18 — 2026-05-07
+- Fixed: [visual-editor] Adding a control directly into a Smart Device Panel table now generates the auto-wrapped row and cell with their required `id` GUIDs (the IDE was rejecting those rows/cells on re-import)
+- Fixed: [visual-editor] Empty attributes of `.gxForm` controls are now serialized as `name=""` instead of bare `name` (HTML5 minimization form is invalid XML and the IDE rejected the file on re-import)
+- Fixed: [visual-editor] Whitespace between `<layouts>` and `<layout>` (and other structural wrappers) is preserved on save — a no-op save now produces an empty `git diff`
+- Changed: [sync-status] Depuration of the changes file no longer removes entries still in `pending` state — the periodic cleanup (`gxSync.changesMaxAgeDays` / `gxSync.changesMaxEntries`) now consults `external-<user>-status.json` and keeps every entry whose status is `pending` or unset, regardless of age or count
+
+#### v1.8.17 — 2026-05-06
+- Fixed: [sync-status] Saving a single GeneXus object no longer registers two `Pending` entries — caused by a Windows path-casing race (`C:\Foo` vs `c:\foo`) between the editor save event and the workspace filesystem watcher. Dedup is now case-insensitive on Windows with a 1.5 s window
+- Fixed: [visual-editor] Saving a `.gxPattern` instance no longer rewrites large parts of the file — preserved across round-trips: `<?xml version="1.0" encoding="utf-16"?>` header, self-closing tags (`<variable />`, `<parameter />` etc.), `<![CDATA[...]>` blocks for code properties, literal `'` in attribute values, line endings (CRLF/LF), and the multi-line `[ ... ]` properties block of `PatternInstance`. The serializer now reads the schema XML (`PXWorkWithInstance.xml`) per property to know whether to emit as Attribute, CDATA, or Element. A no-op save produces an empty `git diff`
+
+#### v1.8.16 — 2026-05-05
+- Fixed: [visual-editor] Group header caption no longer shown twice on the canvas — the duplicate stray TextBlock-like child render is suppressed; underlying `<LEGEND>` element is preserved
+- Fixed: [language-analyzer] No more false "missing '(' at '<Type>'" errors on `New <SDTType>(...)` or `New <SDTType>.<Level>(...)`
+- Fixed: [language-analyzer] No more false "Mismatched input 'Sub'" errors inside platform-specific blocks of `#Events` (e.g. `[Web] { ... Sub 'Name' ... EndSub ... }`)
+- Fixed: [language-analyzer] `Stub <Name>(<params>) ... EndStub` is now recognized as a valid procedural block in WebService Procedures
+- Added: [language-core] Outline view, Breadcrumbs and `Go to Symbol in File` (`Ctrl+Shift+O`) now list every Event, Sub and Stub of a `.gxSource` (with kind prefix and full signature, e.g. `Event Grid1.Load`, `Sub 'CheckSecurityForActions'`, `Stub EnviarCFE(in: &EnviarCFEIn, out: &EnviarCFEOut)`)
+- Fixed: [language-validator] No more false "is not a valid field or level of SDT" errors when accessing a sub-level of a collection item (e.g. `&Item.<SubLevel>.<Field>` where `<Item>` is the collection's `CollectionItemName`)
+
+### Platform
+- Bundle rebuilt with v1.8.18 plugin code: 707 JS files, 1.8 MB.
+- Bundle must be uploaded to `keygenapi.kbbridge.com` after this release.
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged; verified Electron + `ELECTRON_RUN_AS_NODE=1` in place
+
+---
+
 ## 1.7.4 — 2026-05-05
 
 **Plugins v1.8.15** | **VS Code 1.109.4**
