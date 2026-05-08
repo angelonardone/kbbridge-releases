@@ -4,6 +4,32 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 
 ---
 
+## 1.2.64 — 2026-05-08
+
+### Sync Engine
+
+#### v1.4.17 — 2026-05-07
+- Changed: PatternInstance round-trip (export and import of `.gxPattern` files) is now schema-driven and works for **any pattern** registered in the GeneXus environment — not just the PXTools-shipped ones (PXWorkWith, SDWorkWith) that the previous hardcoded implementation supported. The engine reads the pattern's instance specification XML from the externalized `Patterns/<patternName>/` folder to identify which attributes are References, instead of relying on a fixed list of XPaths and attribute names. Built-in patterns (Conversational, Dashboard, PXAudit, PXReportTemplate, PXOAV, etc.) and any third-party or custom pattern installed in the KB are now supported automatically
+- Performance: pattern instance schemas are parsed lazily on first use and cached in memory for the duration of the sync engine process
+- Improved: multi-type references (`reference(WebPanel; SDPanel)`, etc.) are correctly resolved on import — the engine tries each candidate type in declaration order until one resolves the value to a KBObject
+- Fixed: Panel internalization now persists the rules, events, conditions and form that the source file declares — both on creation and on subsequent edits. Earlier round-trips silently dropped every part-level change while reporting "Success" because the SDK's wrapper part required reflection-based access to the inner `PatternInstancePart` and a different write-back path (`PatternBasePart.ReadFrom`) than was being used. Available on GeneXus 17 and 18
+- Fixed: Panel **Variables** are now also internalized — user-defined variables declared in the `#Variables` section of the `.gxSource` are added or updated on the panel through the same pipeline used by Procedure / DataProvider / API / DataSelector / Transaction / WebPanel. Available on GeneXus XEv3, 15, 16, 17 and 18
+- Fixed: PatternInstance internalization (e.g. `.PXWorkWith.gxPattern`, `.SDWorkWith.gxPattern`, `.WorkWith.gxPattern` and any other registered pattern) now actually persists the edits — the previous deserializer reported `Success` but silently dropped every change. Available on GeneXus XEv3, 15, 16, 17 and 18
+
+#### v1.4.16 — 2026-05-05
+- Fixed: Panel internalization now also writes back the Variables section. Previously the deserializer populated a freshly-constructed VariablesPart that was never bound to the panel, so the parsed variables were dropped on the floor. Available on GeneXus 17 and 18
+- Fixed: Internalization no longer rejects edits to existing PatternInstance objects whose pattern is anything other than SDWorkWith — the by-name lookup now iterates every pattern registered in the GeneXus environment and matches the first one that has an instance with the qualified name. Available on every supported GeneXus version
+- Fixed: PatternInstance internalization no longer fails with `Source file not found` when the file's first line carries the SDK display name with a trailing pattern-type and `[]` metadata. The header parser now extracts only the simple object name from the second token and reads the pattern-type name from the third token
+- Changed: PatternInstance exports now write the header line as `PatternInstance <SimpleName> <PatternType>` deterministically, instead of relying on the SDK's inconsistent `Name` property
+- Added: Table internalization now applies changes to the `#Indexes` section of a Table `.gxSource` back to the Knowledge Base. The rest of the Table (physical / logical / redundant attributes and table relations) remains read-only because GeneXus derives those from the underlying Transactions. The engine differentiates auto-generated indexes (`I*`, immutable composition) from user-defined indexes (`U*`, fully editable) and uses structural-signature matching to identify auto-generated indexes across renames
+- Limitation: when a user-defined index is renamed and restructured in the same edit, the engine falls back to delete-and-create and the original `Description` is lost. Workaround: do the rename in one import and the restructure in the next
+- Auto-recovery: if a `I*` index block is accidentally removed from the `.gxSource`, the engine preserves the original index in the KB, emits a warning, and the next sync iteration re-exports the file with the auto-generated block restored
+
+### Sync Manager v1.2.62
+- Added: Automatic check for new Sync Manager versions — informs the user when an update is available with options to download, skip, or remind later
+
+---
+
 ## 1.2.61 — 2026-04-30
 
 ### Sync Engine
