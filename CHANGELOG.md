@@ -9,6 +9,57 @@ three independent streams:
 
 ---
 
+## 1.7.7 — 2026-05-11
+
+**Plugins v1.8.18** | **VS Code 1.109.4**
+
+> Plugin code update: the upstream `v1.8.18` entry was extended with a new feature for protecting dynamic `.gxForm` files (no version bump on the plugin side). Bundle rebuilt to incorporate it. Includes all Platform fixes from v1.7.6.
+
+### Plugins
+
+#### v1.8.18 — additional feature (appended 2026-05-09)
+- Added: [visual-editor] **`.gxForm` files marked as `dynamic="true"` in the root tag are now protected from manual edits with the same UX as `[dynamic]` sections of `.gxSource`** — when KBBridge externalizes a form whose content is maintained by a pattern, it injects `dynamic="true"` on the form's root element (`<BODY>` for HTML layouts, `<GxMultiForm>` for MultiForm, `<layouts>` for Smart Device Panel). The visual editor now detects this attribute and locks the form:
+  - Canvas paints the selection outline in yellow (instead of the regular accent color)
+  - Banner at the top reads "Form is dynamic — content maintained by KBBridge" with an "Unlock Form" button
+  - GX Properties renders every input as read-only and shows the same banner
+  - GX Toolbox dims its items so they cannot be dragged in
+  - Any mutation attempt (drag, drop, right-click cut/paste/delete, keyboard shortcuts) is intercepted at two layers: webview shows a reduced context menu ("Unlock form to edit"); extension confirms with "This form is marked as [dynamic] and is maintained by KBBridge. Do you want to remove the dynamic tag and edit manually?" (Yes / No)
+  - Choosing "Yes" flips the attribute to `dynamic="false"` and re-renders all three panels editable
+  - Forms without `dynamic="true"` behave exactly as before — the lock is opt-in via the file content itself
+
+### Platform
+- All Platform fixes from v1.7.6 carry over: MCP server `process.release.name` patch (fixes `Unsupported device: "cpu"` crash on some Electron builds); Buy License URL now opens the correct page with the user's saved registration data pre-filled.
+- Bundle rebuilt with the new dynamic-form-lock plugin code: 707 JS files, 1.8 MB.
+- Bundle must be uploaded to `keygenapi.kbbridge.com` after this release.
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged from v1.7.6 (the `process.release.name` fix is in place).
+
+---
+
+## 1.7.6 — 2026-05-11
+
+**Plugins v1.8.18** | **VS Code 1.109.4**
+
+> Platform fix release. Two Platform bugs reported by users: (1) the MCP server crashed on some clients with `Unsupported device: "cpu"` because their Electron build reports `process.release.name === 'electron'` instead of `'node'` under `ELECTRON_RUN_AS_NODE=1`, causing `@huggingface/transformers` to take the web/wasm branch (which used our empty `onnxruntime-web` stub); (2) the "Buy License" button from the expired-license dialog and the status bar quick pick opened `https://kbbridge.com/pricing` (a non-existent page) instead of `https://kbbridge.com/buy-license-kbeditor?<params>` with the user's saved registration data.
+
+### Platform
+
+- Fixed: [mcp-server] MCP server no longer fails with `Unsupported device: "cpu"` on Electron builds that report `process.release.name === 'electron'`. A new `setup-onnx.ts` module patches `process.release.name` to `'node'` (with three fallback strategies: direct assignment, `Object.defineProperty`, replacing `process.release`) before `@huggingface/transformers` is loaded. This makes transformers take its complete Node branch — registering the `cpu` execution provider correctly. Diagnostic `[ONNX]` lines are written to stderr for future debugging.
+- Fixed: [license-manager] "Buy License" button (from the expired-license dialog and the status bar quick pick) now opens the correct URL `https://kbbridge.com/buy-license-kbeditor?<params>` with the user's saved registration data (firstName, lastName, company, email, language, fingerprint, version, platform, arch) pre-filled — same URL the Buy button on the registration panel uses. Previously it opened `https://kbbridge.com/pricing` (a page that does not exist on the site). The URL construction was extracted to a shared helper `openBuyLicensePage(userData)` plus `openBuyLicensePageFromSecrets()` for callers that don't have userData in hand. The dead `PRICING_URL` constant was removed.
+- No bundle change in this release — the v1.7.5 bundle (1.8 MB, plugins v1.8.18) is still current and does not need to be re-uploaded.
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server has the onnxruntime backend fix described above. No change to the registration command (`ELECTRON_RUN_AS_NODE=1`, same path as before).
+
+---
+
 ## 1.7.5 — 2026-05-08
 
 **Plugins v1.8.18** | **VS Code 1.109.4**
