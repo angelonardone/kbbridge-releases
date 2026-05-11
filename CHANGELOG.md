@@ -9,6 +9,32 @@ three independent streams:
 
 ---
 
+## 1.7.8 — 2026-05-11
+
+**Plugins v1.8.18** | **VS Code 1.109.4**
+
+> Critical platform fix. The visual-editor extension was crashing during bundle activation with `Cannot find module 'xslt-processor'`, especially visible on system installs (`C:\Program Files\KBbridge\`). Root cause: the `xslt-processor` and `htmlparser2` runtime dependencies (added in plugin v1.8.x for User Control XSL rendering) were never included in our extensions bundle — `build-bundle.py` declared `"third_party": []` for the visual-editor. On user-writable installs the bug was also present but went unnoticed because nobody opened a `.gxForm`. Includes all features from v1.7.7.
+
+### Platform
+
+- Fixed: [build] **Visual-editor runtime third-party dependencies are now included in the bundle.** Added `xslt-processor`, `htmlparser2`, and their 5 transitive runtime deps (`domelementtype`, `domhandler`, `domutils`, `dom-serializer`, `entities`) to `third_party` in `kbbridge/tools/build-bundle.py`. Bundle grew from 1.8 MB to 2.1 MB; visual-editor file count: 145 → 183.
+- Fixed: [license-manager] **Require hook now resolves `package.json#main` from the in-memory sourceCache.** Previously the hook only tried `<base>.js` and `<base>/index.js` before falling through to Node's normal resolver — which doesn't work on read-only system installs where files can't be written to disk. The 7 new third-party packages all declare `main` as `"dist/index.js"`, so the simple lookup would miss them and Node's fallback would also fail (no files on disk). The hook now reads `<base>/package.json` from sourceCache, parses the `main` field, and resolves against sourceCache directly. Prevents the same class of bug in the future.
+
+### Plugins
+- Same as v1.7.7 (plugins v1.8.18 with the dynamic `.gxForm` lock feature).
+
+### Bundle
+- Rebuilt: 2.1 MB (was 1.8 MB).
+- **Must be uploaded to `keygenapi.kbbridge.com`** — the v1.7.5 bundle on the server does NOT have the third-party deps and will continue to crash the visual-editor extension on clients.
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged from v1.7.6 (the `process.release.name` patch is in place).
+
+---
+
 ## 1.7.7 — 2026-05-11
 
 **Plugins v1.8.18** | **VS Code 1.109.4**
