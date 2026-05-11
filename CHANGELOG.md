@@ -9,6 +9,33 @@ three independent streams:
 
 ---
 
+## 1.7.9 — 2026-05-11
+
+**Plugins v1.8.18** | **VS Code 1.109.4**
+
+> Follow-up to v1.7.8. The previous release added `htmlparser2` to the bundle but the v10+ release of that package ships as **pure ESM** (`"type": "module"`). Our bundle loader uses `Module._compile()` (CJS-only), so `require('htmlparser2')` from the visual-editor's compiled CJS code crashed with `Unexpected module status 0. Cannot require() ES Module...`. This release pre-bundles htmlparser2 + its 5 transitive ESM deps into a single CJS file via esbuild, sidestepping the ESM/CJS mismatch entirely.
+
+### Platform
+
+- Fixed: [build] **`htmlparser2` is now pre-bundled with esbuild** to a single CommonJS file with all 5 transitive deps inlined (`domelementtype`, `domhandler`, `domutils`, `dom-serializer`, `entities`). The 6 ESM packages no longer ship as separate entries — they're all rolled into `node_modules/htmlparser2/index.js` (~140 KB CJS) accompanied by a stripped `package.json` that omits `"type": "module"`. The bundle loader resolves `require('htmlparser2')` cleanly as CJS.
+- Added: [build] `build-bundle.py` now supports an `esbuild_bundles` config field on each extension. Used for ESM third-party deps that can't be loaded via `Module._compile`. Run uses esbuild from the mcp-server's node_modules (already shipped in the repo).
+- Bundle: 2.1 MB → 2.0 MB (esbuild inlines deps efficiently; we drop ~38 separate files in favor of one 140 KB bundle).
+
+### Plugins
+- Same as v1.7.8 (plugins v1.8.18 with the dynamic `.gxForm` lock feature).
+
+### Bundle
+- Rebuilt: 2.0 MB.
+- **Must be uploaded to `keygenapi.kbbridge.com`** — replaces the v1.7.8 bundle (which had the ESM htmlparser2 problem).
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged from v1.7.6.
+
+---
+
 ## 1.7.8 — 2026-05-11
 
 **Plugins v1.8.18** | **VS Code 1.109.4**
