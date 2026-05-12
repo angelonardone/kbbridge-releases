@@ -9,6 +9,40 @@ three independent streams:
 
 ---
 
+## 1.7.12 — 2026-05-12
+
+**Plugins v1.8.18** | **VS Code 1.109.4**
+
+> Diagnostic release for the MCP server. A user reported the MCP keeps failing on their machine, but **VS Code 1.109.x's MCP API doesn't surface the server's stderr in any visible Output channel**, so we couldn't see what's wrong. This release adds **file-based logging** from the MCP server itself plus two diagnostic commands so a user can grab the log with one click and send it back.
+
+### Platform
+
+- Added: [mcp-server] **File-based diagnostic logging** from the very first line of the MCP server. Writes to `<globalStoragePath>/mcp-server.log` (path passed via the new `KBBRIDGE_MCP_LOG_FILE` env var). Truncated on each run so the file always reflects the latest spawn. The file's presence/absence is itself a diagnostic signal: missing entirely → process never spawned; empty → died before first log; truncated mid-log → died at that point.
+- Added: [mcp-server] `uncaughtException` and `unhandledRejection` handlers logging full stack traces. Catches transformers / lancedb / onnxruntime crashes that would otherwise be silently swallowed by VS Code's child-process management.
+- Added: [license-manager] Command **"KBEditor: Show MCP Server Log"** — opens the diagnostic log in the editor, one click for the user to send it to support.
+- Added: [license-manager] Command **"KBEditor: Test MCP Server (Diagnose)"** — spawns the MCP server *directly* (bypassing VS Code's MCP API) and pipes its stdout/stderr to an Output channel for 5 seconds. Distinguishes "MCP can't even start" from "MCP starts but VS Code never spawns it".
+- Refactored: [mcp-server] Logging moved to new `diag-log.ts` module shared by `setup-onnx.ts` and `index.ts`. Each log line is timestamped and tagged with a category (`[ONNX]`, `[MCP]`).
+
+### Plugins
+- Same as v1.7.11 (plugins v1.8.18).
+
+### Bundle
+- No bundle change — v1.7.9 bundle (2.0 MB) is still current.
+
+### How to use the new diagnostics
+
+When a user reports the MCP isn't working:
+
+1. Ask them to run **"KBEditor: Show MCP Server Log"** from the Command Palette.
+   - If the log opens with `[ONNX]` / `[MCP]` lines → we see exactly where it crashed.
+   - If the warning "MCP server has not spawned yet" appears → VS Code never invoked the MCP. Ask them to trigger an AI agent search first, then re-run the command.
+2. If the log shows nothing useful, ask them to run **"KBEditor: Test MCP Server (Diagnose)"** — spawns the process manually with our own stderr capture. Confirms whether the MCP server can run at all on that machine.
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
 ## 1.7.11 — 2026-05-12
 
 **Plugins v1.8.18** | **VS Code 1.109.4**
