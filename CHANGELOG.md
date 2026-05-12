@@ -9,6 +9,57 @@ three independent streams:
 
 ---
 
+## 1.7.11 — 2026-05-12
+
+**Plugins v1.8.18** | **VS Code 1.109.4**
+
+> Hardening release on top of v1.7.10. Adds **automated tests + a sync tool** so the VSIX-skeleton-drift bug (which produced the Form Editor redirect loop) can't ship again unnoticed. Also re-syncs all 7 VSIX skeletons against the latest plugin source (the 5 we hadn't touched since April had `devDependencies` / `scripts` cruft we now strip).
+
+### Platform
+
+- Added: [tooling] `kbbridge/tools/sync-vsix-skeletons.py` — one-command resync of every `kbbridge/vsix/*.vsix` against its matching `package.json` in the plugin source. Strips `devDependencies` / `scripts` (build-time only), preserves the "KBEditor: " branded `displayName` prefix. Use `--dry-run` to preview changes; CI-friendly exit code (1 if any drift detected).
+- Added: [test] `smoke-test.py` now has **2 new tests** that catch VSIX skeleton drift before commit:
+  - `VSIX activationEvents match plugin source` — was previously a silent "warn only" since v1.6.x; now fails if the plugin's source declares events the VSIX is missing.
+  - `VSIX contributes in sync (customEditors/commands/views/menus)` — new test that compares every customEditor `viewType`, command `command`, view `id`, and per-menu-category entry counts between VSIX and source. Reports each drift with a clear remediation hint.
+- Tests grew from 18 to 20.
+- All 7 VSIX skeletons resynced via the new tool (5 had unstripped devDependencies/scripts; 2 had been hand-patched in v1.7.10 without the displayName branding).
+- No bundle change — v1.7.9 bundle (2.0 MB) is still current.
+
+### How this prevents future drift
+
+The combination is intentional:
+- **smoke-test.py** runs before every push (per the release checklist). Drift now blocks commits instead of being silently shipped.
+- **sync-vsix-skeletons.py** is the one-command fix when a smoke test fires (also runnable as a pre-flight before bumping versions).
+- The plugin team adding new commands / customEditors / views in their `package.json` will surface in our next `smoke-test.py` run, with a clear pointer to run the sync.
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged from v1.7.6.
+
+---
+
+## 1.7.10 — 2026-05-12
+
+**Plugins v1.8.18** | **VS Code 1.109.4**
+
+> Follow-up to v1.7.9. The visual-editor activated correctly but the **Form Editor entered an infinite redirect loop** when opening any `.gxForm` file. Cause: the VSIX skeletons (`kbbridge/vsix/*.vsix`) had not been re-built since the plugin team added new contributions to `package.json` — the visual-editor's VSIX skeleton was missing the `genexus.formEditor` `customEditor` declaration, 3 commands, 1 view, and several `activationEvents`. Similarly, `genexus-language-core`'s VSIX was missing 6 commands and 2 menus (including "Find All References" / "Find Referenced" from v1.8.15). This release patches both stale VSIX skeletons by re-synchronising their `package.json` with the plugin source.
+
+### Platform
+
+- Fixed: [vsix] **`genexus-visual-editor` VSIX skeleton resynced with plugin source.** Now declares the `genexus.formEditor` custom editor (for `.gxForm` files), the `genexus.toolbox` view, 3 additional commands (including `genexus.openFileWithEditor`), 2 menu contributions, and the `onCustomEditor:genexus.formEditor` activation event. Without these, `.gxForm` files were opening as text and the extension's auto-redirect handler entered an infinite loop trying to switch to a custom editor that VS Code didn't know about.
+- Fixed: [vsix] **`genexus-language-core` VSIX skeleton resynced with plugin source.** Now declares 6 additional commands and 2 menu contributions (notably the `Find All References` / `Find Referenced` entries from plugin v1.8.15 that never appeared in the right-click menu before).
+- No bundle change — the v1.7.9 bundle (2.0 MB with the esbuild htmlparser2 fix) is still current.
+
+### VS Code 1.109.4
+- No upstream changes
+
+### MCP
+- MCP server unchanged from v1.7.6.
+
+---
+
 ## 1.7.9 — 2026-05-11
 
 **Plugins v1.8.18** | **VS Code 1.109.4**
