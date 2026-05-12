@@ -9,6 +9,47 @@ three independent streams:
 
 ---
 
+## 1.7.13 — 2026-05-12
+
+**Plugins v1.8.18** | **VS Code 1.109.4**
+
+> Real fix for the MCP `ERR_DLOPEN_FAILED` problem. The v1.7.12 diagnostic logging let the customer share the exact error: `A dynamic link library (DLL) initialization routine failed.` on `onnxruntime_binding.node`. Root cause: Windows Server 2019 (Build 17763) + VMware guest. `onnxruntime-node` 1.21 requires either DirectML (`dxcore.dll`, only on Win 10 Build 19041+ / Server 2022) or AVX CPU instructions — VMware doesn't expose AVX to guests by default. Without either backend the native binding's `DllMain` returns FALSE and the MCP crashes before registering its tools. **This release adds an automatic WASM fallback** so the MCP works in those environments out of the box.
+
+### Platform
+
+- Added: [mcp-server] **`onnxruntime-node` → `onnxruntime-web` (WASM) automatic fallback.** New shim at `kbbridge/mcp-server/scripts/onnx-fallback-shim.js` replaces `onnxruntime-node/dist/index.js` during embedding. On `require('onnxruntime-node')`, the shim:
+  1. Tries the renamed original (`index-native.js`) first → fast path on machines with AVX or DirectML.
+  2. On `ERR_DLOPEN_FAILED` / DLL-init / dlopen errors → falls back to `onnxruntime-web/dist/ort.node.min.js` with `env.wasm.wasmPaths` pointing at the shipped `.wasm` binaries and `numThreads=1` for maximum compatibility.
+  3. On any other error → re-throws (so missing-file / syntax errors still surface instead of being masked by a slower fallback).
+  Backend chosen is tagged on the module as `__kbbridgeBackend` and logged to stderr (captured by the v1.7.12 diag log).
+- Added: [embed] **Ship the real `onnxruntime-web` package** (not the empty stub) — Node-targeted JS bundle + 2 `.wasm` binaries, ~32 MB total. Browser/WebGL/WebGPU artifacts dropped (~60 MB saved). Installer grows ~32 MB.
+- Updated: [embed] `embed_extensions.sh` renames the original `onnxruntime-node/dist/index.js` to `index-native.js` and drops our shim in its place. Idempotent — re-running the embed doesn't re-rename if it already happened.
+
+### Tests (regression coverage)
+Three new smoke tests in `kbbridge/tools/smoke-test.py` (now **23/23**):
+- **`onnxruntime fallback shim source intact`** — checks the shim file contains its 6 critical markers (native-first require, ERR_DLOPEN_FAILED detection, WASM target path, `wasm.wasmPaths` + `wasm.numThreads` config, backend tag). Quote-style-agnostic so cosmetic refactors don't break it. Catches any future regression where the shim is partially deleted or "simplified".
+- **`onnxruntime WASM fallback files in install`** — verifies the local install at `upstream-vscodium/` has the real `onnxruntime-web` package (rejects `version=0.0.0` stub), the 3 required files (`ort.node.min.js` + 2 `.wasm`), and `onnxruntime-node/dist/index-native.js` exists (confirms embed renamed the original). SKIPs if the install dir isn't present (clean dev env).
+- **`onnxruntime shim require works at runtime`** — spawns `node` inside the install, does `require('onnxruntime-node')`, and asserts InferenceSession + Tensor + env.wasm are present. End-to-end functional test of the shim.
+
+### Docs
+- Updated `kbbridge/docs/MCP_SERVER.md` §4 (Embedding Model) with the full native/WASM fallback rationale, the shim's decision flow, and the 3 regression tests guarding it.
+
+### Bundle
+- No bundle change — v1.7.9 bundle (2.0 MB) is still current.
+
+### Manual workaround (no longer needed after v1.7.13)
+Before this release, customers in restricted environments (Server 2019 + VMware) had to manually:
+1. Extract `onnxruntime-web@1.21.0` into `C:\ort-web-extract\package\`.
+2. Run a PowerShell script that copied the package over our stub and wrote a shim over `onnxruntime-node/dist/index.js`.
+3. Re-apply the script after every KBEditor update.
+
+v1.7.13 does all of that automatically as part of the build — no per-machine setup needed.
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
 ## 1.7.12 — 2026-05-12
 
 **Plugins v1.8.18** | **VS Code 1.109.4**
