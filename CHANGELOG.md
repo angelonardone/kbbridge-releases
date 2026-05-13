@@ -9,6 +9,46 @@ three independent streams:
 
 ---
 
+## 1.7.14 — 2026-05-12
+
+**Plugins v1.8.18** | **VS Code 1.109.4**
+
+> Follow-up to v1.7.13. The WASM fallback shipped — but `search_docs` still failed on the affected customer with `Error: no available backend found. ERR: [cpu] Error [ERR_MODULE_NOT_FOUND]: Cannot find module '...ort-wasm-simd-threaded.mjs'`. Root cause: `ort.node.min.js` defers loading its backend module (a `.mjs` file) until the first `InferenceSession.create()` call. v1.7.13 shipped only the `.js` and `.wasm` files — the `.mjs` wrappers that the bundle imports dynamically were never embedded. `list_topics` and `lookup_method` worked (no embeddings = no inference); `search_docs` blew up at first use. This release ships the missing `.mjs` files **and adds a runtime smoke test** that actually triggers the lazy import so this regression class can't slip through again.
+
+### Platform
+
+- Fixed: [embed] Ship the **3 missing `.mjs` files** under `onnxruntime-web/dist/`:
+  - `ort-wasm-simd-threaded.mjs` — WASM module wrapper, lazy-imported by `ort.node.min.js` at first `InferenceSession.create()`
+  - `ort-wasm-simd-threaded.jsep.mjs` — JSEP variant of the wrapper
+  - `ort.node.min.mjs` — ESM variant of the Node bundle (declared in `package.json#exports.import`)
+  Combined size: ~90 KB. The fix is a 3-line additions in `embed_extensions.sh`.
+
+### Tests (regression coverage)
+- Updated: `onnxruntime WASM fallback files in install` — required-files list extended with the 3 `.mjs` files. Catches the case where `embed_extensions.sh` is rolled back or someone trims the file list.
+- Added: **`onnxruntime WASM backend actually initialises`** — new functional test that:
+  1. Directly loads `onnxruntime-web/dist/ort.node.min.js`
+  2. Points `env.wasm.wasmPaths` at the local `dist/`
+  3. Calls `InferenceSession.create(new Uint8Array(8))` — intentionally invalid as a model, but the call still **triggers the lazy WASM backend init**.
+  4. If we see `ERR_MODULE_NOT_FOUND` / "no available backend" in the error → fail (a `.mjs` file is missing). If we see a model-parsing error → pass (backend initialised, model was just bogus).
+  This is the test that would have caught v1.7.13's bug. The previous shim runtime test only checked the require returned a module — it never exercised the actual WASM init code path.
+- Confirmed by removing `ort-wasm-simd-threaded.mjs` and re-running: both file-presence test and runtime test fail with clear messages.
+- Total smoke tests: 23 → **24**.
+
+### Bundle
+- No bundle change — v1.7.9 bundle (2.0 MB) is still current.
+
+### What this fixes for the customer
+Same WS2019 + VMware client from v1.7.13. After this release:
+- MCP arrives `running on stdio` ✅ (already worked in v1.7.13)
+- Shim picks WASM fallback ✅ (already worked in v1.7.13)
+- `list_topics` / `lookup_method` work ✅ (already worked in v1.7.13)
+- **`search_docs` works** ✅ (new — the lazy `.mjs` import resolves)
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
 ## 1.7.13 — 2026-05-12
 
 **Plugins v1.8.18** | **VS Code 1.109.4**
