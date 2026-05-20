@@ -9,6 +9,40 @@ three independent streams:
 
 ---
 
+## 1.7.15 — 2026-05-19
+
+**Plugins v1.8.18** | **VS Code 1.109.4**
+
+> UX upgrade for the license status panel + small bug fix on recovery flow. The old `Help → View License` opened a 404 URL (`https://KBbridge.com/license`), and `KBEditor: Show License Status` was a minimal QuickPick. Both now open a single KBSync-style webview panel with logo, status/type/expires/key/name/email/company rows, and Buy License / Enter License Key buttons.
+
+### Platform
+
+- Added: [license-manager] **License status webview panel** (`media/license-status.html`) modeled after KBSync's License tab. Replaces the previous QuickPick. Renders Status (colored: green/orange/red), Type, Expires, Key (truncated for safety), Name, Email, Company, plus the 2 action buttons.
+- Added: New helper `computeLicenseDisplay(data)` + `truncateLicenseKey()` centralize the date/status logic so callers don't reimplement it.
+- Added: `getWebviewContent()` now accepts a `extraTokens` dict for runtime data interpolation, with HTML-escape on all non-passthrough fields (defense against `<` in user-typed name or company).
+- Added: VSCodium source patch `patches/kbeditor-help-license-panel.patch` — modifies `OpenLicenseUrlAction.run()` to detect `command:` URIs and dispatch them via `ICommandService` instead of through `openerService.open()` (which silently drops `command:` URIs because `CommandOpener` requires explicit `allowCommands`).
+- Changed: `prepare_vscode.sh` sets `product.licenseUrl` to `"command:kbbridge.showLicenseStatus"`. Combined with the patch, **Help → View License now opens the license panel** instead of a 404 URL.
+- Fixed: [license-manager] Recovery flow was discarding the firstName/lastName/company fields the user typed in the registration form — only `email` was stored. The recovered license then showed "—" for those fields in the new panel. The Recover button now sends all 5 fields (name, last name, company, email, language); the handler stores them in `SECRET_KEY_DATA` alongside the recovered license key.
+
+### How the 3 entry points map to the panel
+
+| Click | Result |
+|---|---|
+| Status bar item (the trial/expiry indicator at the bottom) | Opens the panel |
+| Command Palette → `KBEditor: Show License Status` | Opens the panel |
+| Menu bar → Help → View License | Opens the panel (via the new patch) |
+
+When no license is stored (fresh install / debug-clear), the entry points still show the existing "No License" QuickPick — there's no data to display yet, so a panel would be empty.
+
+### Bundle / build
+- No bundle change — v1.7.9 bundle (2.0 MB) is still current.
+- The next CI build of Step 1 will apply the new patch and regenerate `workbench.desktop.main.js` with consistent checksums.
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
 ## 1.7.14 — 2026-05-12
 
 **Plugins v1.8.18** | **VS Code 1.109.4**
