@@ -9,6 +9,47 @@ three independent streams:
 
 ---
 
+## 1.7.16 — 2026-05-19
+
+**Plugins v1.8.21** | **VS Code 1.109.4**
+
+> Plugin sync: 3 versions consolidated. Headline feature is the **new `.gxLayout` visual editor** for GeneXus report layouts (PrintBlocks, controls with paper-relative positioning, copy/cut/paste between bands). Also: Show Rows/Show Cells overlay in `.gxForm`, columnsStyle/rowsStyle properties exposed in GX Properties, and `.gxLayout` recognized by the Sync engine for internalization.
+
+### Plugins
+
+#### v1.8.21 — 2026-05-19
+- Added: [visual-editor] **Copy / Cut / Paste of controls between PrintBlocks on `.gxLayout`** — `Ctrl+C` / `Ctrl+X` / `Ctrl+V` plus right-click menu, multi-selection support. Deep snapshot in clipboard, fresh `RPT_INTERNAL_NAME` per pasted control (no collisions), `RPT_X`/`RPT_WIDTH` preserved, `RPT_Y`/`RPT_HEIGHT` clamped to destination band. Layouts marked `dynamic="true"` ignore paste (defense-in-depth).
+- Added: [visual-editor] Right-click context menu on PrintBlock headers with band-level operations
+- Added: [visual-editor] Multi-selection improvements on `.gxLayout` (shift-click, marquee, arrow-key move)
+- Added: [visual-editor] Red overflow `!` indicator when a control extends past the paper's right edge
+- Fixed: [visual-editor] 9 fixes around `.gxLayout` rendering, drag/drop precision, band resize, etc.
+- Fixed: [sync-status] `.gxLayout` save is now recognized by the Sync engine for internalization (matches the existing `.gxSource` / `.gxForm` handling).
+- Fixed: [language-analyzer], [language-core] minor parsing/recognition fixes
+
+#### v1.8.20 — 2026-05-18
+- Added: [visual-editor] **`columnsStyle` / `rowsStyle` properties in GX Properties** for tables in `.gxForm` — granular per-column / per-row CSS class declaration. Visualisation on the canvas reflects the declared classes.
+- Added: [visual-editor] 4 other table-related improvements (default cell widths, alignment, etc.)
+- Changed: [visual-editor] cleanup of property panel layout
+
+#### v1.8.19 — 2026-05-17
+- Added: [visual-editor] **`Show Rows` / `Show Cells` overlay in `.gxForm`** — toggle button on the canvas that overlays a grid showing the row/cell boundaries (with their internal `RowName` / `controlName`), so users can see the structural layout under the rendered preview. Independent toggles for rows and cells.
+- Added: [visual-editor] 7 additional gxLayout editor refinements (band selection, ruler, snap-to-grid, etc.)
+- Changed: [visual-editor] **Refactor of "Save Object As..."** to a more robust implementation that better handles `.gxLayout` and shared scenarios (the previous one had edge cases on certain object types).
+
+### Platform
+- Bundle rebuilt with v1.8.21 plugin code: **717 JS files** (was 707), **9 CSS** (was 7), **39 JSON** (was 32). Bundle size 2.0 MB → **2.2 MB**.
+- VSIX skeletons resynced for `genexus-visual-editor` and `genexus-language-core` (both had new contributions / activationEvents for the gxLayout editor). Caught by smoke test `VSIX contributes in sync` and auto-fixed by `sync-vsix-skeletons.py` — no manual work.
+- **Bundle must be uploaded to `keygenapi.kbbridge.com`** after this release.
+
+### Tests
+- 24/24 smoke tests pass.
+- The drift-detection tests (added in v1.7.11) correctly caught the new contributions in visual-editor and language-core packages and the sync script fixed them in one run — exactly the workflow they were built for.
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
 ## 1.7.15 — 2026-05-19
 
 **Plugins v1.8.18** | **VS Code 1.109.4**
