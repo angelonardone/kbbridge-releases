@@ -4,6 +4,30 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 
 ---
 
+## 1.2.75 — 2026-05-23
+
+### Sync Engine
+
+#### v1.4.24 — 2026-05-22
+- Fixed: the GeneXus 18 IDE no longer shows a "this Knowledge Base was last opened by a different installation" warning after the engine has run a sync cycle. The engine now snapshots the `.gxw` file immediately before opening the KB and restores it as soon as the open succeeds, so the file keeps reflecting the IDE's last open — not the engine's. Available on GeneXus 18
+
+#### v1.4.23 — 2026-05-21
+- Fixed: Variables of a Panel typed as a **user-defined External Object** from the Knowledge Base are now correctly recognized when the panel is imported. Previously these variables were silently degraded to Numeric(4,0) — losing their type and breaking any code that called methods specific to the External Object. Completes the parallel fix for built-in runtime External Objects (HttpClient, File, Properties, XMLReader, etc.) shipped earlier. Available on GeneXus XEv3, 15, 16, 17 and 18
+- Fixed: importing an API object that already exists in the Knowledge Base no longer fails with `API '<name>' already exists`. Edits to existing APIs are now applied correctly. Available on GeneXus 17 and 18
+
+### Sync Manager
+
+#### v1.2.75 — 2026-05-23
+- Updated: AI skills (`ai/kbbridge/*.md`) — documented the new `.gxLayout` extension (Procedure print layout) with XML structure, control types and coordinate system; expanded `.gxForm` coverage with the three formats broken down by root tag (`<body>` for WebPanel/WebComponent, `<GxMultiForm>` for Transaction, `<layouts>` for SDPanel); documented the `dynamic="true|false"` root-tag attribute and how it differs from the existing `[dynamic]` section tag; removed legacy `.gxProperties` mentions (extension retired — object-level properties now live inline in `.gxSource` after the header)
+
+#### v1.2.74 — 2026-05-22
+- Fixed: AI documentation deployment now detects and replaces the managed block regardless of marker capitalization, and auto-heals any leftover duplicate managed blocks left behind by older buggy deploys — previously, files that had been deployed by a version using the older `KBBridge:` (uppercase B) markers would get a second `KBbridge:` (lowercase b) block prepended on every new deploy because the marker search was case-sensitive
+
+#### v1.2.73 — 2026-05-21
+- Fixed: "New version available" dialog no longer closes together with the splash screen during startup — the dialog used to inherit the splash as its Owner and was force-closed when the splash's auto-close timer fired
+
+---
+
 ## 1.2.72 — 2026-05-19
 
 ### Sync Engine
