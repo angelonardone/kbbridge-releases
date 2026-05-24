@@ -9,6 +9,30 @@ three independent streams:
 
 ---
 
+## 1.7.17 — 2026-05-24
+
+**Plugins v1.8.22** | **VS Code 1.109.4**
+
+> Bug-fix sync. Single fix in `sync-status`: a forced externalization run from KBBridge Manager **while KBEditor was closed** would flood the Sync panel with thousands of fake "pending" entries on next open. Affects only users who externalize via the Manager with the editor not running — but for them it was very noisy. No new features, no UI changes.
+
+### Plugins
+
+#### v1.8.22 — 2026-05-23
+- Fixed: [sync-status] **Forced bulk export that completes while KB Editor is closed no longer floods the Sync panel with fake pending entries on next open** — the startup `getLastBulkExportStatus()` check only acted on the `exporting` state. A `bulk-export-end` already on disk meant `status: 'idle'`, the startup branch did nothing, `changeTracker.bulkExportEndTime` was never set, and the first window-focus reconcile compared the pre-externalization file snapshot against the new filesystem state → every externalized file registered as "pending". Fix: the startup check now has a second branch — when `status === 'idle'` but the reader returns an `endTimestamp` (meaning a `bulk-export-end` / `sync-batch-end` is the most recent marker on disk), the extension primes `bulkExportEndTime` with `max(endTimestamp, fileMtime)` (same `effectiveEndTime` policy as the live `endBulkExportPause()`). First reconcile then filters out every file with `mtime <= effectiveEndTime` and only reports genuine manual edits made after the externalization finished. UTC timestamps end-to-end (Manager writes ISO 8601 with `Z`, `stat.mtimeMs` is UTC, `new Date(isoZ).getTime()` parses as UTC) — timezone never enters the comparison.
+
+### Platform
+- Bundle rebuilt with v1.8.22 plugin code: **same shape as v1.7.16** (717 JS, 9 CSS, 39 JSON, 2.2 MB). The sync-status fix is ~13 lines in `extension.ts`; no other file changes.
+- No VSIX drift detected (`sync-vsix-skeletons.py --dry-run` shows 0 patched).
+- **Bundle must be uploaded to `keygenapi.kbbridge.com`** — the bytes are different (contains the fix in sync-status' compiled JS).
+
+### Tests
+- 24/24 smoke tests pass.
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
 ## 1.7.16 — 2026-05-19
 
 **Plugins v1.8.21** | **VS Code 1.109.4**
