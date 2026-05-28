@@ -4,6 +4,13 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 
 ---
 
+## 1.2.76 — 2026-05-28
+
+### Sync Engine v1.4.25
+- Fixed: externalizing a Procedure that comes from a referenced module (for example procedures under `GeneXus.SD.Synchronization` or other system modules) no longer fails with `Layout serialization error: The given key was not present in the dictionary.`. These procedures do not have a Layout to externalize and are now treated as such — silently skipped — instead of being reported as failures. Available on every supported GeneXus version
+
+---
+
 ## 1.2.75 — 2026-05-23
 
 ### Sync Engine
