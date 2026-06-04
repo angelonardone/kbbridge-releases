@@ -9,6 +9,60 @@ three independent streams:
 
 ---
 
+## 1.7.18 — 2026-06-04
+
+**Plugins v1.8.28** | **VS Code 1.109.4**
+
+> Plugin sync: 6 versions consolidated (v1.8.23 → v1.8.28). Headline: **incremental validator cache** + **`Domain:` prefix on `DataType` fully supported**. The cache update means new Domains / Attributes / SDTs / External Objects created by AI assistants or by externalising a new module no longer require `Developer: Reload Window` — they're recognised on the next save. Plus 11 false-error fixes in validator/analyzer and 2 sync-status race conditions resolved.
+
+### Plugins
+
+#### v1.8.28 — 2026-06-03
+- Added: [language-validator, visual-editor] **`Domain:<DomainName>` prefix on `DataType` is now fully supported across the stack.** In a KB with a Domain `Boolean` *and* the built-in `Boolean`, `DataType = 'Domain:Boolean'` now disambiguates: (1) data-type validator accepts it and checks the domain exists, (2) method validator strips the prefix and looks up the domain's base type so methods like `.Trim()` on a `Character`-based domain resolve correctly, (3) GX Properties parses the prefix into the Domain reference field and only serialises it back when the domain name collides with a built-in. Module-qualified form (`Domain:<Name>, <Module>`) deferred.
+
+#### v1.8.27 — 2026-06-02
+- Fixed: [sync-status] **Modifications to an object that KBBridge already exported in the same day are now correctly detected.** The export-write filter previously rejected ANY future modification of the file for 24 h. Now it compares against the export's actual timestamp with a 5-second tolerance — anything later registers for sync.
+- Fixed: [sync-status] **No false "pending" entries for objects arriving only via KBBridge export, even when KBBridge runs on a separate server and the files reach the local workspace via git pull (or other delayed transport).** The filter now uses `max(entry timestamp, local mtime of kbbridge-*-exports.json)` with a 5-minute window — handles both local-KBBridge and server-KBBridge transparently.
+
+#### v1.8.26 — 2026-06-01
+- Fixed: [language-validator] **No false `Parameter '&Mode' expects type 'Numeric(4.0)' but got 'Character(3)'` warnings on `Call(&Mode, ...)` invocations** when the called Procedure/WebPanel uses built-in variables (`&Mode`, `&Pgmname`, `&Today`) as `parm()` parameters without declaring them in `#Variables`. Parameter parser now consults the built-in catalog.
+- Fixed: [language-validator] **`&RestCode` recognised in Procedures exposed as REST WebServices** (previously only known inside API objects). Type also corrected to `Numeric(3.0)` to match HTTP status code standard.
+- Fixed: [sync-status] **No false `'<TypeName>, <Module>' is not a valid data type` warnings on new types created by AI assistants or external editing.** Sync panel now consumes both `kbbridge-*-exports.json` AND `external-<user>-changes.json` with the same incremental policy — warnings clear on next save without `Reload Window`.
+- Fixed: [language-validator] **No false `'AddItem' is not a valid method for type 'numeric'` warnings on `&Variable.AddItem(...)` calls** when the variable is a Combo Box / Dynamic Combo Box / Radio Button / List Box. Method validator now reads `ControlType` from the sibling `.gxForm` on BOTH property-access AND method-call branches (previously only property branch did this).
+- Fixed: [language-validator, sync-status] **A Domain / Attribute / SDT / External Object created in the workspace is recognised immediately, without `Developer: Reload Window`.** Three issues fixed: (1) Sync and validator now use the same project-root convention (strip trailing `/Knowledge Base`), (2) cache key is case-insensitive on Windows and normalises drive letter to uppercase, (3) catalog update triggers re-validation of every open GeneXus document — stale warnings clear without manual edit.
+
+#### v1.8.25 — 2026-05-31
+- Fixed: [language-validator] **No false `Variable '&Mode' is not declared in #Variables section` warnings on WebPanels, Panels (Smart Device), WebComponents and WebMasterPages.** `&Mode` is a built-in `Character(3)` with values `INS`/`UPD`/`DLT`/`DSP` — previously only recognised for Transactions.
+- Fixed: [language-analyzer] **No false `Mismatched input '.' expecting {')', ','}` errors on `call(Module.SubModule.ObjectName)`.** Qualified module paths now accepted by the parser.
+- Fixed: [visual-editor] **Pattern Editor now renders the full tree of a `.gxPattern` instance even when its events contain `{` / `}` on their own line inside `<![CDATA[]]>` sections.** The brace counter now ignores braces inside CDATA (tracked across line boundaries).
+- Fixed: [language-analyzer] **No false `no viable alternative at input '()'` on `Event &Variable.IsValid()` headers.** Both qualified-name (`Grid.Load()`) and variable-method (`&Var.IsValid()`) event headers now accept trailing parentheses.
+- Fixed: [language-validator] **No false `'IsValid' is not a valid method for type 'X'` warnings on `Event &Variable.IsValid()` headers.** Validator now skips the entire header line of `Event ...` declarations — the identifier after `Event` is identity, not executable code.
+- Fixed: [language-validator] **No false `'IsEmpty' is not a valid field or level of SDT '<SDT.Path>'` warnings on chains like `&MySDT.Collection.Count.IsEmpty()`.** Chain resolver now advances the tracked type to the property's return type on field-style access too (previously only method-style).
+- Fixed: [language-validator] **No false `expects type 'Character' but got '<domain-name>'` warnings on call arguments like `Msg(&MySDT.Level.Field.ToString(), Status)` where the SDT field uses a custom domain.** Parameter type resolver now resolves the field's declared type to its underlying base type before looking up the next method in the chain.
+
+#### v1.8.24 — 2026-05-25
+- Fixed: [language-validator, sync-status] **Installing a new external module (e.g. `GeneXusCryptography`) and externalising it while KBEditor is open no longer requires `Developer: Reload Window` before the new types are recognised.** Validator picks up new Domains / Attributes / SDTs / External Objects incrementally as they appear on the KB Exports tab.
+- Fixed: [language-validator] **Declaring a missing variable in `#Variables` now clears the `Variable '&X' is not declared` warning IMMEDIATELY on every line that uses `&X` (not just the line you just edited).** Same applies to type changes and deletions.
+
+#### v1.8.23 — 2026-05-24
+- Fixed: [language-validator] **No false `expects type 'Character' but got 'Numeric(4.0)'` errors when a call argument is a string concatenation that starts with a built-in GeneXus variable (`&Pgmname`, `&Today`, `&Now`, etc.).** Validator now reads the built-in's real type from the catalog instead of falling back to numeric default.
+
+### Platform
+- Bundle rebuilt with v1.8.28 plugin code: same shape as v1.7.17 (717 JS / 9 CSS / 39 JSON / 2.2 MB) but bytes differ — validator and sync-status compiled JS now contains the new fixes.
+- No VSIX drift detected (`sync-vsix-skeletons.py` reports 0 patched).
+- Core-lib restructure to `out/`-only that the plugin team pre-announced has NOT happened yet in v1.8.28 — our build pipeline remains compatible (we already read from `out/`).
+
+### Tests
+- 24/24 smoke tests pass.
+
+### Bundle
+- **Must be uploaded to `keygenapi.kbbridge.com`** — bytes differ from v1.7.17's bundle even though shape is identical.
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
 ## 1.7.17 — 2026-05-24
 
 **Plugins v1.8.22** | **VS Code 1.109.4**
