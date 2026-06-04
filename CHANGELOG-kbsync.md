@@ -4,6 +4,13 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 
 ---
 
+## 1.2.79 — 2026-06-04
+
+### Sync Engine v1.4.28
+- Added: when a Domain shares its name with a built-in type (for example a Domain called `Boolean`, `Date`, `DateTime`, `Image`, `Video`, `Audio`, `Blob`, `BlobFile`, `GUID`, `GeoLine`, `GeoPoint`, `GeoPolygon` or `Geography`), the engine now emits the explicit prefix `Domain:` in the `DataType` property — e.g. `DataType = 'Domain:Boolean'` — so the round-trip back into the Knowledge Base preserves the binding to the Domain instead of degrading it to the built-in type with the same name. The prefix is added only when there is an actual name collision and no module qualifier is present (a reference that already includes the module, like `'Boolean, Sales'`, is unambiguous on its own and is emitted as before). Variables on every applicable object (Procedure, Data Provider, API, Data Selector, Transaction, Web Panel, Panel, SDT items, etc.), Attribute definitions, and Domains that inherit from another Domain are all covered. Files exported with the previous engine keep working — re-exporting them produces the new disambiguated format. Available on every supported GeneXus version
+
+---
+
 ## 1.2.78 — 2026-06-02
 
 ### Sync Engine
