@@ -9,6 +9,84 @@ three independent streams:
 
 ---
 
+## 1.7.20 — 2026-06-07
+
+**Plugins v1.8.28** | **VS Code 1.109.4**
+
+> Critical macOS fix (follow-up to v1.7.19). After installing the ad-hoc-signed v1.7.19, users on Apple Silicon got past the "is damaged" error and the app launched — but the license-manager then failed with `KBbridge could not load extensions — Native addon missing decryptBundle function — rebuild required`. Root cause: the Rust napi-rs native addon (`kbbridge-loader`, used for AES-GCM bundle decryption and machine fingerprinting) was only ever built for Windows. The repo committed `kbbridge-loader.win32-x64-msvc.node` and the macOS/Linux workflows never built the equivalent for their platforms. Same bug exists on Linux but no Linux user reported yet. This release builds the native addon per-platform in CI and updates the require code to find any platform-specific `.node`.
+
+### Platform
+
+- Fixed: [build] **Per-platform native addon build in CI.** Each workflow (`kbbridge-windows.yml`, `kbbridge-linux.yml`, `kbbridge-macos.yml`) now has a `Setup Rust` + `Build native addon (kbbridge-loader)` step that runs `npm run build` (i.e. `napi build --platform --release`) and copies the resulting `kbbridge-loader.<platform>.node` to `kbbridge/license-manager/` so the embed step ships it with the install. File names produced:
+  - `kbbridge-loader.win32-x64-msvc.node` (Windows x64)
+  - `kbbridge-loader.darwin-arm64.node` (Mac Apple Silicon)
+  - `kbbridge-loader.darwin-x64.node` (Mac Intel)
+  - `kbbridge-loader.linux-x64-gnu.node` (Linux x64)
+- Fixed: [license-manager] **`requireNativeAddon()` now finds any platform-specific `.node`**, not just the Windows variant. Globs `kbbridge-loader.*.node` in the extension dir and tries each. Previously hard-coded to `kbbridge-loader.win32-x64-msvc.node` → returned `null` on every non-Windows platform → `decryptBundle` not callable → "rebuild required" crash.
+- Fixed: [license-manager] **`getMachineFingerprint()` consolidated**, uses the same `requireNativeAddon()` helper. On macOS/Linux the native addon's `getMachineFingerprint()` throws (Phase-1 marker: Windows-only) and the JS catch handler falls back to the software-only fingerprint (hostname + platform + arch + cpu model). The software fingerprint is stable per machine — different Macs produce different fingerprints.
+
+### Why this only manifested now
+
+- macOS users couldn't even *launch* the app pre-v1.7.19 (the "is damaged" error blocked them). So the missing-native-addon bug was hiding behind the Gatekeeper bug.
+- Linux is affected too. No Linux user reported because the customer base is mostly Windows. After this release, Linux works as well.
+- Windows was never affected because the committed `.node` matches `process.platform` exactly. The Windows workflow now also builds fresh in CI (was previously using the committed file) — keeps everything consistent and avoids drift between the Rust source and the shipped binary.
+
+### Tests
+- 24/24 smoke tests pass.
+- The new CI step can't be tested locally (cross-platform builds need each platform's runner). Risk is low: `napi build` is widely used and documented; if it fails on a runner we see the error in CI before the install ships.
+
+### Bundle / build
+- No bundle change — v1.7.18 bundle (2.2 MB, plugins v1.8.28) is still current. **No re-upload needed.**
+
+### Manual workaround for users on v1.7.19 today
+None — v1.7.19's macOS install is fundamentally non-functional on the license side. They need v1.7.20.
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
+## 1.7.19 — 2026-06-07
+
+**Plugins v1.8.28** | **VS Code 1.109.4**
+
+> macOS install fix. Users on **Apple Silicon (arm64) Macs** reported `"KBEditor" is damaged and can't be opened` on first launch. Cause: macOS on Apple Silicon **requires** every binary to carry at least an ad-hoc code signature; without ANY signature the OS rejects the binary as corrupt. Our CI never signed because we don't have an Apple Developer Program account ($99/yr). This release adds an ad-hoc signing step to the macOS build workflow that satisfies the mandatory-signing requirement without needing a real certificate.
+
+### Platform
+
+- Fixed: [build/macos] **Apple Silicon "is damaged" error on first launch.** New `Code-sign app (ad-hoc)` step in `.github/workflows/kbbridge-macos.yml` runs `codesign --force --deep --sign -` on `KBEditor.app` between the post-build modifications and `prepare_assets.sh`. Applies to both arm64 and Intel builds (Intel didn't strictly need it but it's harmless and prevents future Gatekeeper tightening).
+
+### What changes for users
+
+| Mac type | Before v1.7.19 | After v1.7.19 |
+|---|---|---|
+| Apple Silicon (M1/M2/M3/M4) | "is damaged and can't be opened" — could not launch | Opens after first-launch right-click → Open (standard "unidentified developer" flow) |
+| Intel | "unidentified developer" warning — could open via right-click | Same as before (no regression), now also ad-hoc signed |
+
+### What ad-hoc signing does NOT fix
+
+- **Gatekeeper warnings remain** — users still see "unidentified developer" on first launch and must right-click → Open. The proper fix for this is Apple Developer Program + notarization (~$99/yr); deferred.
+- **Mark-of-the-web quarantine attribute** — for users who still see "damaged" because their browser set `com.apple.quarantine` on the download:
+  ```bash
+  xattr -cr /Applications/KBEditor.app
+  ```
+  This clears the quarantine flag and lets the app open. We'll add this to the README's macOS install section.
+
+### Pre-existing signing path
+The existing Developer-ID + notarization logic in `prepare_assets.sh` (gated by `${CERTIFICATE_OSX_P12_DATA}`) is unchanged. If we ever set up an Apple Developer account, that path will activate and supersede the ad-hoc step automatically.
+
+### Tests
+- 24/24 smoke tests pass.
+- Workflow change cannot be tested locally (macOS-only command). The change is small, well-scoped, and following Apple's documented `codesign -` pattern — risk is low.
+
+### Bundle / build
+- No bundle change — v1.7.18 bundle (2.2 MB, plugins v1.8.28) is still current. **No re-upload needed.**
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
 ## 1.7.18 — 2026-06-04
 
 **Plugins v1.8.28** | **VS Code 1.109.4**
