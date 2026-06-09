@@ -4,6 +4,17 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 
 ---
 
+## 1.3.0 — 2026-06-09
+
+### Sync Engine v1.4.29
+- Fixed: importing an object whose path on disk crosses through nested folders inside a module (for example a file under `@PXTools\@APIs\Personalized\Templates\`) no longer fails with `Folder '<module>.<inner>' already exists.` when one of those folders already lives in the Knowledge Base. In GeneXus, a Folder's unique identity inside a module is just `<module>.<folder name>` regardless of how many parent folders sit above it (folder names are unique within a module). The engine was looking up the folder using the accumulated disk path (`<module>.<parent folder>.<inner folder>`), missing the existing folder, falling through to "create new" and getting rejected by the GeneXus SDK as a duplicate. The lookup now uses the correct identity — module plus folder name only — so existing folders are reused and only genuinely-new folders are created. Available on every supported GeneXus version
+
+### Sync Manager v1.3.0
+- Added: search bar in the console and log viewer window — open with Ctrl+F or the Find button in the toolbar, type to jump to the next match, use ↑/↓ (or Enter / Shift+Enter, or F3 / Shift+F3) to navigate between matches, with a "current of total" counter shown on the right. Auto-scroll is paused while the search bar is open so the viewport stays on the highlighted match across log refreshes, and resumes its previous state when the bar is closed with Esc or the ✕ button
+- Fixed: console viewer auto-scroll no longer stays stuck after a click inside the output box — clicking placed the keyboard cursor at the click position and on the next refresh the viewport was pulled back to that position instead of staying at the latest line, so auto-scroll appeared to stop working until the checkbox was toggled off and on. The cursor is now moved to the end of the text before each scroll, so auto-scroll keeps following the latest output regardless of where the user clicked
+
+---
+
 ## 1.2.79 — 2026-06-04
 
 ### Sync Engine v1.4.28
