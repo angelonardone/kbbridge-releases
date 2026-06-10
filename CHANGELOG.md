@@ -9,6 +9,34 @@ three independent streams:
 
 ---
 
+## 1.7.21 — 2026-06-09
+
+**Plugins v1.8.29** | **VS Code 1.109.4**
+
+> Bug-fix sync. 3 entries in validator/analyzer: `Set` method recognized on `Date` and `DateTime` variables, `&End` accepted as a variable name (was rejected as keyword), and a new check that catches `DataType = '<SDT>'` references missing their module qualifier when the SDT only lives inside a module — with a clear suggested correction.
+
+### Plugins
+
+#### v1.8.29 — 2026-06-08
+- Fixed: [language-validator] **No false `'Set' is not a valid method for type 'date'`/`datetime` warnings on `&Var.Set(year, month, day)` and `Set(year, month, day, hour, minute, second)` for DateTime.** `Set` is the standard GeneXus way to assign a literal date/datetime to a variable in code — was missing from the catalog of both Date and DateTime built-in types.
+- Fixed: [language-analyzer] **No false `'End' is not a valid keyword. Did you mean 'EndIf'?` errors on `&End` used as a variable name.** `&End` is a common loop exit flag in GeneXus code (`Do While &End = False`). Grammar now accepts `End` as a variable name when prefixed with `&`. Block-closing `End` (`Header ... End`) still works because the `&` prefix disambiguates.
+- Added: [language-validator] **`DataType = '<SDT>'` without module now flagged when the SDT only exists inside a module.** Previously bare SDT names were silently accepted (cache stored simple name), so an AI-generated `DataType = 'SDTCFEParaEnsobrar'` would pass even though the SDT lived in `eFactura.TareasBatch`. Validator now checks the KB object index: if no match lives at the root, it reports `'SDTCFEParaEnsobrar' is in module 'eFactura.TareasBatch'. Use 'SDTCFEParaEnsobrar, eFactura.TareasBatch' instead.` SDTs at the KB root still accepted without module — no regression on existing patterns.
+
+### Platform
+- Bundle rebuilt with v1.8.29 plugin code: same shape as v1.7.20 (717 JS / 9 CSS / 39 JSON / 2.2 MB) but bytes differ — validator and analyzer compiled JS contains the new fixes.
+- 0 VSIX drift.
+
+### Tests
+- 24/24 smoke tests pass.
+
+### Bundle
+- **Must be uploaded to `keygenapi.kbbridge.com`** — bytes differ from v1.7.20's bundle.
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
 ## 1.7.20 — 2026-06-07
 
 **Plugins v1.8.28** | **VS Code 1.109.4**
