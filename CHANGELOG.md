@@ -9,6 +9,70 @@ three independent streams:
 
 ---
 
+## 1.8.0 — 2026-06-19
+
+**Plugins v1.9.5** | **VS Code 1.109.4**
+
+> **MINOR bump** — plugin team shipped the **Build Pipeline UI**, a major new feature. Right-click any `.gxSource` or `.gxPattern` → Specify / Specify + Generate / Build (compile) / Build Called (compile) — runs through the KB Sync Engine (v1.5.6+). New "Builds" and "Navigations" tabs in the Sync panel. Errors published as native VS Code diagnostics in the Problems panel. Environment picker, automatic-build tracking, Build All for whole-KB compiles. 6 plugin versions consolidated (v1.9.0 → v1.9.5), 19 entries — heavy iteration after the initial v1.9.0 ship.
+
+### Plugins
+
+#### v1.9.0 — 2026-06-12 (headline)
+- Added: [sync-status] **Build Pipeline UI** — Specify / Specify + Generate / Build (compile) commands on `.gxSource` from the explorer or editor tab (multi-selection supported). Requests are written to `.kbbridge-sync/`, picked up by the Sync Engine ≤10s, run in a child process so sync isn't interrupted.
+- Added: [sync-status] **New "Builds" tab** in the KBBridge Sync panel — live status (Sent ⏳ → Queued → Running → result), per-object badge (`ok` / `warnings` / `errors` / `skipped`), per-request "Output" section.
+- Added: [sync-status] **Native VS Code diagnostics** — specification errors (with section/line/column) appear at the exact position in `.gxSource`; compilation errors as file-level diagnostics on line 1. Source: "GeneXus Build". Replaced on each new build, cleared when the object comes back clean, re-published after window reload.
+- Added: [sync-status] **Navigation viewer** — each built object with a navigation dialog gets a "Navigation" link; opens a self-contained HTML with the IDE's Navigation Report look, with freshness banner.
+- Added: [sync-status] **Pattern instances** — Specify/Generate/Build work on `.gxPattern` files too. Engine applies the pattern first, then builds parent + children (marked with "pattern" badge in the Builds tab).
+- Fixed: [language-validator] **No false `Parameter '...' expects type 'Boolean' but got '<SDT name>'` errors** on call arguments that are comparisons or logical expressions (e.g. `iif(&SDTCollection.Count > 0, ...)`). Validator now recognizes top-level `=`, `<>`, `<`, `>`, `<=`, `>=`, `like`, `and`, `or`, `not` always produce `Boolean` regardless of operand types.
+- Fixed: [sync-status] **"Track external changes" is ON by default again on fresh installs** — a 2026-04-13 change to read exclusively from User scope was dropping the declared `true` default when the user had never touched the setting. Reader now honors the declared default.
+
+#### v1.9.1 — 2026-06-14 (KB Sync Engine v1.5.2+)
+- Added: [sync-status] **Environment selector** — dropdown at the top of the Builds tab, preselected on the active environment; build requests stamped with the choice. Hidden if KB has a single environment. Each build row shows the environment it ran on.
+- Added: [sync-status] **Automatic builds tracked** — Engine-triggered post-import builds appear in the Builds tab tagged "auto" with the same detail as manual builds. Errors also published as diagnostics.
+- Added: [sync-status] **Navigations tab** — current navigation set per environment, filter by last N builds or "Full set", search by object name. Click opens the self-contained HTML navigation report.
+
+#### v1.9.2 — 2026-06-15 (KB Sync Engine v1.5.3+)
+- Added: [sync-status] **Per-user automatic builds** — the Engine attaches the username to its auto-build triggers; auto rows in the Builds tab are filtered to show only your own.
+- Added: [sync-status] **Discard failed internalization** — when an import fails, the object shows "Externalization blocked" in My Sources with a one-click `↺` action to discard local changes and re-export from the KB (with confirmation, destructive).
+- Added: [sync-status] **Build All button** (KB Sync Engine v1.5.4+) — on the Environment line of the Builds tab + palette command. Asks for confirmation, builds the whole KB. Resulting batch tagged "Build All".
+- Added: [sync-status] **`not-specified` (NS) object state** in the Builds tab for Domains / Attributes / SDTs / Tables / External Objects after import. Info message with one-click "Request Build All" action.
+- Changed: [sync-status] Per-object status badges shortened to aligned 2-letter codes (OK / WA / ER / SK / NS).
+- Fixed: [sync-status] **Single `Ctrl+S` no longer produces 2 entries** in My Sources via the directory reconciler — save's own writes (including delayed re-writes from visual/pattern editors) are absorbed into the snapshot; reconciler skips files VSCode saved recently.
+- Fixed: [sync-status] **Stale import errors no longer linger** after a later successful import of the same object — moment a successful internalization is recorded, earlier error/failed entries for the same object are cleared.
+
+#### v1.9.3 — 2026-06-16
+- Fixed: [sync-status] **Companion `.gxForm`/`.gxLayout` files written by a KBBridge export no longer show as false "pending"** — filter now matches by object identity (qualified name), not exact file path.
+- Fixed: [sync-status] **Engine-owned status file no longer written by the extension** — eliminates a 2-writers race. Orphan entries are matched by change id and ignored.
+
+#### v1.9.4 — 2026-06-17 (KB Sync Engine v1.5.5+)
+- Added: [sync-status] **"Force code generation on build" setting** (off by default) — when enabled, Specify+Generate / Build asks the Engine to regenerate code even if up-to-date. Useful right after internalizing changes.
+- Fixed: [sync-status] **Atomic writes of sync files** — extension's pending-changes file and request files now write to a temp file in the same folder, then atomic rename. Eliminates intermittent Engine warnings `Could not read changes file ... Unexpected end when deserializing array`.
+
+#### v1.9.5 — 2026-06-18 (KB Sync Engine v1.5.6+)
+- Added: [sync-status] **"Build Called (compile)" command** — compiles selected objects + their entire call tree (transitive). Plain Build (compile) now builds only the requested set; "Build Called" is the explicit opt-in to closure (IDE "with references"). Effective on GeneXus 17/18.
+- Added: [sync-status] **Expand all details / Collapse all details** in panel context menu — applies to My Sources and Builds tabs. State remembered per batch in Builds across refreshes.
+- Changed: [sync-status] **Build batches start collapsed** by default — even when finished with errors. Reduces clutter; expand the ones you care about or use Expand all.
+- Fixed: [sync-status] **Clicking a pattern-generated object** (Work With child Web Component, etc.) in the Builds tab now opens its source — they live in hidden `.<instance>.<pattern>.gxPattern.Childs` folders that VS Code's file search skips. Resolver now falls back to async directory scan (cached after first hit).
+- Fixed: [sync-status] **Error messages with section names jump to correct line** — section headers are externalized with suffixes (`#Events [dynamic]`); mapper now recognizes the suffix instead of falling back to body counting.
+
+### Platform
+- Bundle rebuilt with v1.9.5 plugin code. Visible changes: **sync-status grew from 53 → 66 files** (+13 — the new `src/build/`, `src/models/BuildTypes`, `ExportRequestWriter`, `NavigationViewer`, etc.). Other extensions unchanged. Total bundle: **730 JS** (was 717) / 9 CSS / 39 JSON / 2.2 MB.
+- VSIX skeleton drift on `genexus-sync-status` (new commands + new view contributions for the Builds and Navigations tabs). Auto-fixed by `sync-vsix-skeletons.py` — exactly the workflow we built in v1.7.11.
+
+### Tests
+- 24/24 smoke tests pass.
+
+### Bundle
+- **Must be uploaded to `keygenapi.kbbridge.com`** — different shape (+13 files in sync-status).
+
+### Compatibility note
+The Build Pipeline UI requires **KB Sync Engine v1.5.6+** to function fully. With an older Engine: requests time out with "Waiting for Sync Engine" message, and the new controls (environment selector, auto builds, navigation tab, Build All, Build Called, Force code gen) stay hidden. Users running the new editor against an old Engine see a degraded but non-broken experience.
+
+### VS Code 1.109.4
+- No upstream changes
+
+---
+
 ## 1.7.21 — 2026-06-09
 
 **Plugins v1.8.29** | **VS Code 1.109.4**
