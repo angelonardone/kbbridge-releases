@@ -40,14 +40,14 @@ Modern VS Code editor with IntelliSense, visual editing, AI-assisted development
 
 GeneXus Knowledge Base synchronization tool — converts GeneXus objects to text files and vice versa.
 
-**Current version: v1.3.0** — Sync Engine v1.4.29
+**Current version: v1.4.6** — Sync Engine v1.5.7
 
 ### Windows
 
 | File | Description | Download |
 |------|-------------|----------|
-| KBSyncSetup-1.3.0.exe | Installer | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/kbsync-v1.3.0/KBSyncSetup-1.3.0.exe) |
-| KBSync-1.3.0-portable.zip | Portable | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/kbsync-v1.3.0/KBSync-1.3.0-portable.zip) |
+| KBSyncSetup-1.4.6.exe | Installer | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/kbsync-v1.4.6/KBSyncSetup-1.4.6.exe) |
+| KBSync-1.4.6-portable.zip | Portable | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/kbsync-v1.4.6/KBSync-1.4.6-portable.zip) |
 
 > [KBSync Changelog](https://github.com/angelonardone/kbbridge-releases/blob/main/CHANGELOG-kbsync.md)
 
