@@ -4,6 +4,36 @@ All notable changes to KBSync — the GeneXus Knowledge Base synchronization too
 
 ---
 
+## 1.4.10 — 2026-07-01
+
+### Sync Engine
+
+#### v1.5.12 — 2026-07-01
+- Fixed: when the engine starts, the automatic build no longer runs for objects whose changes were already synchronized on previous days. Previously, on start-up the build could be re-triggered for changes that had already been processed in an earlier session, re-specifying objects that were already up to date. Changes that genuinely arrived while the engine was stopped are still processed as usual.
+
+#### v1.5.11 — 2026-06-27
+- Fixed: the Address (SOAP endpoint) of a WSDL External Object is now externalized and internalized together with its other SOAP properties. Previously it was omitted from the externalized file, so the configured endpoint was neither preserved nor changeable through synchronization — relevant when the same web service is duplicated per environment (for example production and testing) with different addresses.
+- Fixed: an enumerated Domain whose data type is the default Numeric(4,0) now externalizes its enumerated values (the Enum Values list). Previously the values were omitted from the externalized file for that particular type, so the enumeration was lost; the values are now read from the domain's underlying definition, so they are externalized for every enumerated domain regardless of its data type.
+
+#### v1.5.10 — 2026-06-26
+- Fixed: a build no longer gets stuck on machines where GeneXus shows a blocking error dialog while starting the build — for example when a code generator cannot be loaded on that particular machine. Because the build runs unattended in the background, there is nobody to dismiss such a dialog; the engine now closes it automatically (recording its text in the build log) so the build continues, just as confirming the dialog in the IDE would. Available on every GeneXus version where build requests are supported.
+
+#### v1.5.9 — 2026-06-25
+- Fixed: the automatic build that runs after synchronization no longer fails when it starts while the Knowledge Base is still internalizing objects. Previously, if the build was triggered just before internalization finished, it could fail and none of the requested objects were specified. Now the build is held as pending and automatically re-run once internalization settles; for the automatic build of internalized objects it additionally includes the same user's related objects that were still being internalized, so they are all specified together in a single batch. The wait reuses the existing post-synchronization quiet period, so no object is ever specified while internalization is still in progress. Available on every GeneXus version where build requests are supported.
+
+#### v1.5.8 — 2026-06-22
+- Fixed: a build of specific objects — including the automatic build after synchronization — now always specifies, generates and compiles the requested objects, instead of occasionally skipping a freshly-internalized object that GeneXus considered already up to date (the object was reported as built but its generated code was not refreshed). A whole-Knowledge-Base "Build All" keeps its incremental behavior, reprocessing only the objects that actually changed. Available on GeneXus 17 and 18.
+
+### Sync Manager
+
+#### v1.4.10 — 2026-07-01
+- Updated: AI docs (`ai/kbbridge/`) — added guidance for duplicating a GeneXus object (Save Object As): for every object type, which sibling files must be copied together (`.gxForm` alongside `.gxSource` for Transactions/WebPanels/WebComponents/Panels; `.gxLayout` alongside `.gxSource` for Procedures with a report layout; single-file objects such as SDT, Data Provider and Data Selector), how to rewrite the first line of the `.gxSource` with the new object name, and what must not be touched (form/layout content, internal identifiers, existing target files) — so AI assistants no longer produce half-copies that leave the duplicated object structurally broken
+
+#### v1.4.7 — 2026-06-25
+- Updated: AI docs (`ai/kbbridge/`) — added `build-pipeline.md` documenting the Sync Engine's build pipeline for AI assistants: how to request builds (the build-request files, their fields and id format) and how to read the results (build status with per-object and per-message detail, the available environments and their lock, and the current navigation set per object and environment); and expanded `genexus-navigation.md` documenting the externalized GeneXus navigation report so AI assistants can read it — including how to determine the base table and its extended table (the foreign-key joins that resolve foreign attributes), and how to understand errors and warnings that were not otherwise surfaced
+
+---
+
 ## 1.4.6 — 2026-06-19
 
 ### Sync Engine
