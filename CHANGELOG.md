@@ -9,6 +9,50 @@ three independent streams:
 
 ---
 
+## 1.8.1 — 2026-07-02
+
+**Plugins v1.9.9** | **VS Code 1.109.4**
+
+> **PATCH bump** — incremental plugin sync (v1.9.6 → v1.9.9). Mostly false-positive
+> eliminations in the analyzer/validator and a syntax-colouring fix for properties
+> whose values contain single quotes (GeneXus `Formula` / `RegularExpression`), plus
+> two visual-editor niceties: **per-node icons** on pattern-instance trees (with a
+> companion-extension icon fallback) and **"Save Object As…" from `.gxLayout` / `.gxForm`**.
+> No new KB Sync Engine requirement.
+
+### Plugins
+
+#### v1.9.9 — 2026-07-01
+- Added: [visual-editor] **Pattern-instance tree nodes now render a per-node icon** — every node of a `.gxPattern` structure tree (levels, attributes, grids, orders, filters, conditions, tabs, actions, parameters, …) gets an icon instead of a bare label. Resolution order: caption-supplied icon → icon named by the pattern schema (when the file exists next to the pattern) → icon provided by the pattern's companion editor extension → built-in glyph fallback. The companion-extension path lets patterns whose icons live inside a .NET assembly (e.g. GeneXus *Work With*) ship those images with their own extension as embedded resources, so the real icons render without a GeneXus install on the machine.
+- Fixed: [analyzer] **No more false `extraneous input '@' expecting {…}` errors on `Formula = '...'` properties whose expression contains single-quoted string literals** — `''` inside the value is now treated as two literal delimiters (an empty string) rather than an escaped quote. A multi-line property value closes only when a `'` is followed by a structural delimiter (`,`, `]`, end of line); internal quotes are part of the expression. Simple values like `DataType = 'Character(100)'` are unaffected.
+- Fixed: [analyzer] **No more false `extraneous input '\'`, `'+'`, `')'` errors on `RegularExpression = '...'` properties whose regex contains a `[…]` character class with a `'` inside** (e.g. `[-+.']`) — the analyzer now tracks balanced `[…]` pairs while reading a multi-line string, so a `]` that closes a class opened inside the value counts as content, and only a truly outer `]` ends the value.
+- Fixed: [core] **Syntax colouring no longer bleeds past an internal `'` in `Formula` / `RegularExpression` values** — property values in the canonical multi-line `[ … ]` form close only when a `'` is followed by a comma, end of line, or the block's closing `]`; regex character classes like `[-+.']` are consumed atomically. Formulae with `''` empty-string sentinels or `'@'`-style literals now stay coloured as a single string from opening to closing quote.
+
+#### v1.9.8 — 2026-06-30
+- Fixed: [validator] **No more false `'CurrentItem' is not a valid field or method of SDT '<SDT>'` errors when the variable's own `Collection` property is True** — the validator now recognises collection members (`CurrentItem`, `Count`, `Item(N)` without parentheses) from the variable-level Collection flag, not only when the SDT itself is declared as a collection, and types the chain after `CurrentItem` / `Item(N)` as the item type so further field access validates correctly.
+- Added: [visual-editor] **"Save Object As…" is now available from a `.gxLayout` file and works from `.gxForm` when opened in its visual editor** — reachable from the explorer and editor-tab context menus for layouts and from the command palette while a form or layout is active. Companion files (`.gxForm`, `.gxLayout`, `.gxPattern`, `.gxChilds`) next to the source are detected and copied under the new object name, and the new source's first line is updated.
+
+#### v1.9.7 — 2026-06-28
+- Fixed: [visual-editor] **Code editor for pattern-instance properties stored as XML attributes** (Action Previous/Post Code, Previous Code, Condition, Error Message on `.gxPattern` instances) **now shows the actual source instead of XML-encoded entities** — the full named and numeric (decimal + hex) entity set is decoded on read, so the code looks identical to GeneXus. On save, line breaks and tabs are re-encoded as numeric entities so the formatting round-trips to disk exactly as GeneXus emits it.
+
+#### v1.9.6 — 2026-06-27
+- Fixed: [validator] **No more false `Parameter '&Var.Field' expects type 'Numeric' but got 'SDT:<…>'` warnings when the variable is typed as the item of a collection SDT level** (e.g. `DataType = 'SDTCFEInterno.ReferenciaItem, eFactura.Definiciones'`) and a field of that item is passed to a function like `Abs(...)` — the parameter type resolver now falls back to matching by `collectionItemName` when no level matches by name, so the field of an item is correctly typed and the call type-checks.
+
+### Platform
+- Bundle rebuilt with v1.9.9 plugin code. Only **genexus-visual-editor** changed shape: **118 → 119 JS** (+1 — the new `GenexusIconFallback`; `SaveAsHandler` modified in place). All other extensions unchanged. Total bundle: **731 JS / 9 CSS / 39 JSON / 2.2 MB** (was 730 JS).
+- VSIX skeleton: `genexus-visual-editor` package.json drift auto-synced by `sync-vsix-skeletons.py` — the **"Save Object As…" menu now enables on `.gxLayout`** (added to the `when` clause for both the explorer and editor-tab context menus).
+- VSIX skeleton: `genexus-language-core` **`syntaxes/genexus.tmLanguage.json` updated** for the v1.9.9 syntax-colouring fix. Grammars are declarative and ship on disk in the VSIX (not the encrypted bundle), and the sync tool only covers `package.json`, so the grammar was refreshed manually.
+- Shared configs refreshed: `kbbridge/shared/{gx-properties,gx-methods,gx-keywords,gx-functions}-config.json` re-synced from plugin source. These are copied to disk by the embed script for method lookup and property/keyword/function config. They had drifted since v1.6.2 — most notably `gx-methods-config.json` was **+44 KB** behind source — so this also brings method metadata current.
+
+### VS Code 1.109.4
+- No upstream changes.
+
+### Tests
+- 24/24 smoke tests pass.
+
+### Bundle
+- **Must be uploaded to `keygenapi.kbbridge.com`** — proprietary JS changed (visual-editor recompiled; +1 file).
+
 ## 1.8.0 — 2026-06-19
 
 **Plugins v1.9.5** | **VS Code 1.109.4**
