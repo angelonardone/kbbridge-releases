@@ -9,6 +9,34 @@ three independent streams:
 
 ---
 
+## 1.8.2 — 2026-07-02
+
+**Plugins v1.9.10** | **VS Code 1.109.4**
+
+> **PATCH bump** — a single analyzer fix, follow-up to the v1.9.9 multi-line-string
+> lexer change. An edge case merged two consecutive simple property values into one
+> string spanning many lines, hiding `]` / `#End` / `#Variables` markers and producing
+> false `Mismatched input '#End' expecting '{'` errors. Now fixed with no regression to
+> the v1.9.9 formula/regex fixes. Parser-only change → bundle rebuilt; no VSIX, shared-config,
+> or grammar changes.
+
+### Plugins
+
+#### v1.9.10 — 2026-07-02
+- Fixed: [analyzer] **No more false `Mismatched input '#End' expecting '{'` errors on a Procedure/Transaction with several simple properties in the same `#Variables` block** — after the v1.9.9 tightening of multi-line string recognition, a lexer edge case cross-ate the token stream: two simple values like `DataType = 'MaxStr'` followed a few lines later by `DataType = 'Attribute:XYZ'` were merged into a single string spanning dozens of lines, so `]`, `#End`, `#Variables` and other structural markers between them vanished from the parser's view and surfaced later as unexpected tokens. Two simple `'...'` values on separate lines are again lexed as two independent strings; the v1.9.9 regex-`[…]`-class and formula-`''`/`'@'` fixes stay intact (no regression).
+
+### Platform
+- Bundle rebuilt with v1.9.10 parser (`genexus-parser` lexer regenerated → analyzer). **No change in shape: 731 JS / 9 CSS / 39 JSON / 2.2 MB** — only the compiled lexer content differs. No VSIX skeleton, shared-config, or grammar (`tmLanguage`) changes this release.
+
+### VS Code 1.109.4
+- No upstream changes.
+
+### Tests
+- 24/24 smoke tests pass.
+
+### Bundle
+- **Must be uploaded to `keygenapi.kbbridge.com`** — proprietary JS changed (analyzer/parser recompiled).
+
 ## 1.8.1 — 2026-07-02
 
 **Plugins v1.9.9** | **VS Code 1.109.4**

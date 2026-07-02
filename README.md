@@ -8,29 +8,29 @@
 
 Modern VS Code editor with IntelliSense, visual editing, AI-assisted development, and offline licensing.
 
-**Current version: v1.8.1** — Plugins v1.9.9 | VS Code 1.109.4
+**Current version: v1.8.2** — Plugins v1.9.10 | VS Code 1.109.4
 
 ### Windows (x64)
 
 | File | Description | Download |
 |------|-------------|----------|
-| KBEditorUserSetup-x64-1.8.1.exe | **Recommended** — User installer (no admin) | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.8.1/KBEditorUserSetup-x64-1.8.1.exe) |
-| KBEditorSetup-x64-1.8.1.exe | System installer (requires admin) | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.8.1/KBEditorSetup-x64-1.8.1.exe) |
+| KBEditorUserSetup-x64-1.8.2.exe | **Recommended** — User installer (no admin) | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.8.2/KBEditorUserSetup-x64-1.8.2.exe) |
+| KBEditorSetup-x64-1.8.2.exe | System installer (requires admin) | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.8.2/KBEditorSetup-x64-1.8.2.exe) |
 
 ### Linux (x64)
 
 | File | Description | Download |
 |------|-------------|----------|
-| kbbridge_1.8.1_amd64.deb | Debian / Ubuntu | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.8.1/kbbridge_1.8.1_amd64.deb) |
-| kbbridge-1.8.1-el8.x86_64.rpm | Red Hat / Fedora | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.8.1/kbbridge-1.8.1-el8.x86_64.rpm) |
-| KBEditor-linux-x64-1.8.1.tar.gz | Portable tarball | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.8.1/KBEditor-linux-x64-1.8.1.tar.gz) |
+| kbbridge_1.8.2_amd64.deb | Debian / Ubuntu | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.8.2/kbbridge_1.8.2_amd64.deb) |
+| kbbridge-1.8.2-el8.x86_64.rpm | Red Hat / Fedora | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.8.2/kbbridge-1.8.2-el8.x86_64.rpm) |
+| KBEditor-linux-x64-1.8.2.tar.gz | Portable tarball | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.8.2/KBEditor-linux-x64-1.8.2.tar.gz) |
 
 ### macOS
 
 | File | Description | Download |
 |------|-------------|----------|
-| KBEditor-darwin-arm64-1.8.1.zip | Apple Silicon (M1 / M2 / M3 / M4) | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.8.1/KBEditor-darwin-arm64-1.8.1.zip) |
-| KBEditor-darwin-x64-1.8.1.zip | Intel Mac | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.8.1/KBEditor-darwin-x64-1.8.1.zip) |
+| KBEditor-darwin-arm64-1.8.2.zip | Apple Silicon (M1 / M2 / M3 / M4) | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.8.2/KBEditor-darwin-arm64-1.8.2.zip) |
+| KBEditor-darwin-x64-1.8.2.zip | Intel Mac | [Download](https://github.com/angelonardone/kbbridge-releases/releases/download/v1.8.2/KBEditor-darwin-x64-1.8.2.zip) |
 
 > [KBEditor Changelog](https://github.com/angelonardone/kbbridge-releases/blob/main/CHANGELOG.md)
 
