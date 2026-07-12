@@ -9,6 +9,49 @@ three independent streams:
 
 ---
 
+## 1.8.3 — 2026-07-12
+
+**Plugins v1.9.12** | **VS Code 1.109.4**
+
+> **PATCH bump** — plugin sync v1.9.11 + v1.9.12 (plus a late v1.9.10 analyzer bullet that
+> landed after our v1.8.2). Analyzer: keyword-named variables (`&msg`, `&for`, `&if`, …) and
+> in-body `#[dynamic]` API objects now parse. Visual editor gains a set of Pattern-Instance
+> enhancements — an **external-change diff overlay**, per-property change hints, a **`Ctrl+F`
+> Find bar**, header alignment/pinning, and a `<code>` CDATA-indentation fix. Feature-rich for a
+> PATCH; **could be argued as MINOR (1.9.0)** — flag if you'd prefer that.
+
+### Plugins
+
+#### v1.9.12 — 2026-07-12
+- Fixed: [analyzer] **Variables named after a control-flow keyword now parse** — `&msg`, `&for`, `&if`, `&sub`, `&case`, `&when`, `&while` were reported as syntax errors even though real KBs use them everywhere (`&msg` alone accounts for hundreds of failing WebPanels/WebComponents in the grammar-gap audit). They now parse cleanly, matching `&do`/`&new`/`&call`/`&exit`.
+- Fixed: [analyzer] **API objects with an in-body `#[dynamic]` marker now parse** — the marker was accepted at the top of Procedure/Transaction/WebPanel/Panel/DataProvider/Test objects but not inside `API TestX { ... }`. All 67 API objects in the audited KBs errored on this single omission; now handled like every other object type.
+
+#### v1.9.11 — 2026-07-06
+- Added: [visual-editor] **External-change diff overlay in the Pattern Instance editor** — when a `.gxPattern` changes on disk while open (Claude Code, `git pull`, editing as text), affected nodes get a coloured background + a git-decoration bar (green = added, amber = modified) and a sticky banner (`External change: N added, M modified, K removed`) with a "Clear diff" button. Removed nodes are listed in a popover. Large replacements (git checkout, mass regen) show a single banner linking to the built-in file diff instead of marking every node.
+- Added: [visual-editor] **GX Properties panel shows which properties changed on a modified node** — each changed property row gets the diff colour and a "was: &lt;old value&gt;" hint; properties on a fully-new node use the green "added" variant. Edits from the panel itself don't mark anything — only changes that arrived from outside.
+- Added: [visual-editor] **Find bar (`Ctrl+F`) inside the Pattern Instance editor** — a VS Code-styled Find widget matching (case-insensitive) node captions, tags, XML attribute values and text content. `Enter`/`F3` next, `Shift+Enter`/`Shift+F3` previous, `Esc` closes; current match in gold, others in light yellow, ancestors auto-expanded. Also a `KBBridge: Search in Pattern Instance` palette command.
+- Changed: [visual-editor] **Pattern Instance header aligned with the Form/Layout editors** — object name + pattern type now use the same weight/size, with the type in a compact badge; the right button becomes a low-key "XML" button (like the Layout editor) instead of the heavier full-colour "Open as Text".
+- Changed: [visual-editor] **Pattern Instance header pinned while scrolling** — the whole header stack (name + badge, external-change banner, Find bar) anchors to the top, matching the Form editor.
+- Fixed: [visual-editor] **Form editor header stays pinned while scrolling** — the "Form is dynamic…" banner's own `position: sticky` clashed with the header wrapper and hid it; the block is now anchored as one unit.
+- Fixed: [visual-editor] **`<code>` node side-editor preserves original CDATA indentation** — the reader stripped one leading tab per line inside `<![CDATA[…]]>` and the writer re-added it; on disk it cancelled out, but the intermediate `.gxCode` shown was flattened to column 0 (losing `For Each … EndFor` nesting). Reader/writer now leave CDATA lines untouched; disk bytes stay identical to what GeneXus emits.
+
+#### v1.9.10 — 2026-07-02 (addendum — landed after KBEditor v1.8.2)
+- Fixed: [analyzer] **No more false `no viable alternative at input '('…` errors on code concatenating single-quoted string literals with `+`** — expressions like `&Scripts.Add('GridSelectionFix("Grid1","' + StrReplace(Grid1.InternalName, "GRID1", "") + '");')` were merged into one giant string: the relaxed rule added for Formula/regex properties was also matching inside event bodies. It now applies only inside a property block (`[ … ]`); in event code, `.Rules`, `#Events` and elsewhere, `'X' + 'Y'` is again two strings joined by `+`. (Appended to the plugin's v1.9.10 entry after our v1.8.2 shipped, so it reaches users here.)
+
+### Platform
+- Bundle rebuilt with v1.9.12 code. Changed extensions: **genexus-language-analyzer** (parser lexer + parser regenerated) and **genexus-visual-editor** (167 → 168 files: new `XmlTreeDiff`; external-change diff, Find bar, header changes, CDATA fix + 3 restyled webview CSS). Total: **732 JS / 9 CSS / 39 JSON / 2.2 MB** (was 731 JS).
+- VSIX skeleton: `genexus-visual-editor` package.json synced by `sync-vsix-skeletons.py` — new `KBBridge: Search in Pattern Instance` command + `Ctrl+F` keybinding.
+- Webview CSS (`form-editor` / `properties-panel` / `tree-editor` `styles.css`) ships **via the bundle**, not the VSIX: the loader writes `/webview/` + `.css` files to disk at runtime, so the rebuild is sufficient (no manual VSIX CSS edit needed — unlike declarative grammars).
+
+### VS Code 1.109.4
+- No upstream changes.
+
+### Tests
+- 24/24 smoke tests pass.
+
+### Bundle
+- **Must be uploaded to `keygenapi.kbbridge.com`** — proprietary JS/CSS changed (analyzer + visual-editor recompiled, +1 file).
+
 ## 1.8.2 — 2026-07-02
 
 **Plugins v1.9.10** | **VS Code 1.109.4**
