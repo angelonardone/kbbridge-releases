@@ -9,6 +9,92 @@ three independent streams:
 
 ---
 
+## 1.9.0 — 2026-07-28
+
+**Plugins v1.9.19** | **VS Code 1.109.4**
+
+> **MINOR bump** — seven plugin versions pulled (v1.9.13 → v1.9.19). Headline: **first-class
+> support for the new `File` object type** (v1.9.17), introduced by KB Sync Engine v1.5.18 to
+> carry arbitrary binary attachments as a `.File.gxSource` + a sibling `.File.gxFile` (a ZIP with
+> a single entry). Analyzer, validator, visual editor, sync panel, syntax highlighter and icon
+> theme all learned about it. v1.9.18/v1.9.19 close the fallout of that change (`&File` as a
+> variable name, File headers containing English keywords) plus a family of SDT resolution
+> bugs — module qualifier dropped when picking between sibling module versions, nested
+> `Item.Item` levels, and fields declaring `Collection = 'True'` inline. The rest of the range
+> is the grammar-gap audit's analyzer/validator false-positive fixes, plus sync-panel
+> move/rename detection.
+
+### Plugins
+
+#### v1.9.19 — 2026-07-28
+- Fixed: [analyzer] **`For Each Transaction.SubLevel` no longer reports `Transaction '…' does not exist in the Knowledge Base`** — iterating a nested sublevel by its qualified path (`For Each Invoice.InvoiceLine`, `Invoice.InvoiceLine.LineTax`) was read as a module qualifier, so no Transaction ever matched. The check now tries decreasing prefixes of the name until it finds a real Transaction and treats the remaining segments as the sublevel path (the combined `Module.Transaction.SubLevel` also works).
+- Fixed: [analyzer] **A `File` header whose name contains English words GeneXus reserves as keywords now parses** — `File Setup for Windows`, `File Notes on Migration`, `File Signed by CA` failed with `Mismatched input '<word>'` at `for` / `on` / `by`. The `fileName` grammar rule now accepts any token sequence between the `File` keyword and the next structural delimiter (`[` or `{`), since the Engine derives File names from the attachment's original filename.
+- Fixed: [validator] **`&SDT.Field.Item(N)` as an argument resolves when the field declares its collection inline** — v1.9.18's fix only detected collections declared as a nested level, missing the very common `FieldName [ DataType = 'X, Module' Collection = 'True' ]` shape, which kept reporting `expects 'ModuleName.TypeName' but got 'sdt'`. `.Item(N)`, `.Count`, `.Add(…)`, `.CurrentItem()`, `.Clear`, `.Sort(…)` are now resolved on both shapes.
+- Fixed: [validator] **Nested collection levels that reuse the same `CollectionItemName` navigate correctly** — a variable typed `'SDTOrderReport.Item.Item, Sales'` (an outer list of groups, each with an inner list of rows) reported every inner field as `not a valid field or method of SDT '…Item.Item, …'`, because the second `Item` short-circuited at the outer level. The walk now tries to descend into a sub-level first and only stays put when nothing matches; fixed in both the type resolver and the chained-member walker.
+- Fixed: [validator] **`&Var.Field` keeps the SDT's module when the DataType names a sublevel** — `DataType = 'OrderReport.Item.Detail, Sales.V3'` had the `, Sales.V3` stripped before the on-disk lookup, so a KB carrying `V1`/`V2`/`V3` siblings validated against the alphabetically-first version and flagged fields added in `V3` as missing.
+- Fixed: [validator] **The general chain validator's type resolver also carries the module through** — same symptom via a second path: it found the right file using the module, but rebuilt the resolved type as `SDT:OrderReport.Item.Detail` without it, so the next chain step fell back to `V1`. It now emits `SDT:OrderReport.Item.Detail, Sales.V3`.
+
+#### v1.9.18 — 2026-07-27
+- Fixed: [analyzer] **A variable named `&File` no longer breaks the parser** — v1.9.17 made `File` a recognised keyword, so `&File = new()` / `&File.Source = …` started failing with `no viable alternative at input '&File'`. `File` joins the object-type keywords already accepted as variable names (`&sdt`, `&api`, `&webpanel`, `&procedure`, …).
+- Fixed: [validator] **`.IsEmpty()` (and other type-preserving methods) on an Attribute-typed variable whose Domain declares no `DataType`** — `iif(&AttrVar.IsEmpty(), '', '…')` was flagged as `expects type 'Boolean' but got 'attribute:xxx'`. A Domain file with no `DataType` line now defaults to `Numeric(4.0)`, matching the GeneXus IDE, so the chain resolves through to the base type and the method returns its real type.
+- Fixed: [validator] **Fields whose name starts with `SDT` are no longer dropped when parsing an SDT structure** — `SDTSignatureParameters`, `SDTOptions`, `SDTFilterParams` were swallowed by a `startsWith('SDT')` filter meant only for the root header, so every access to them was reported as an invalid field/level. The filter now requires the header pattern (`SDT ` with a trailing space).
+- Fixed: [validator] **`&SDT.Level.Collection.Item(N)` as an argument no longer reports `expects 'ModuleName.TypeName' but got 'sdt'`** — collection-only methods (`.Item(N)`, `.Count`, `.CurrentItem()`, `.Add(…)`) on a collection level were normalised to a generic `'sdt'` and looked up in the SDT catalog instead of the collection catalog, falling through to an "unknown method" fallback. The parameter validator now checks the collection catalog first, mirroring what the chained-member validator already did.
+- Fixed: [validator] **Parameter-count validation on unqualified Procedure/DataProvider calls picks the closest homonym** — with two objects sharing a simple name in different modules, the resolver arbitrarily took the first one found while walking the filesystem and could report `Expected N parameters but got M` on a legitimate call. Unqualified calls now prefer the candidate whose path shares the longest common prefix with the caller (the usual "module == folder" convention); qualified `Module.Object` calls are unchanged.
+
+#### v1.9.17 — 2026-07-25
+- Added: [analyzer] **`File` is now a first-class GeneXus object type** — a `.File.gxSource` (`File commons-codec-1_4_jar [ FileName = 'commons-codec-1.4.jar' … ]`) is parsed/validated like `Procedure`/`Transaction`/`Table`; before, `File` was flagged as an unknown keyword on line 1. The header also accepts dashes and spaces in the name (`File Open Sans Bold`), since the Engine derives it from the attachment's original filename; the body braces `{ }` are optional.
+- Added: [visual-editor] **Dedicated binary editor for `.File.gxFile`** — instead of a corrupted text buffer, it shows the attached file name, size and MIME type, with **Replace attachment…** (rewrites the attachment in place, keeping the single-entry invariant) and **Download / Open** (extracts to temp and hands off to the OS default app). Opening it auto-populates GX Properties from the sibling `.File.gxSource`.
+- Added: [visual-editor] **Replacing the attachment keeps the `.File.gxSource` in sync** — `File Name` / `File Extension` are updated to match the new binary, so metadata never disagrees with the attachment; applied as a normal undoable edit that shows in the Sync panel.
+- Added: [visual-editor] **GX Properties knows the `File` object** — the full set of 13 confirmed properties (`Name`, `Description`, `File Name`, `File Extension`, `Extract Zip`, plus per-generator `Extract for X Generator` / `X Extract Folder` for Java, .NET Framework, .NET, iOS, Android), each with the label/type/default GeneXus shows; "New Object" creates a valid empty File.
+- Added: [visual-editor] **`File` in the "New Object" dialog** with its own icon; `.gxFile` siblings are now duplicated on **Save Object As…** alongside the `.gxSource` (like `.gxForm`/`.gxLayout`/`.gxChilds`).
+- Added: [sync-status] **`.gxFile` binaries tracked as a sibling of `.File.gxSource`** — edits from any source (visual editor, external tool, git) are recorded as an external change of the File object, same as `.gxForm`/`.gxLayout`; merge-conflict detection is bypassed for the binary.
+- Fixed: [core] **Syntax highlighting recognises `File`, `Table`, `ExternalObject`, `StructuredDataType` and `API` object declarations on line 1** — their header used to render as plain text; the keyword, object name and inline properties now get their colours (including `File` names with dashes/spaces).
+- Added: [icons] **Dedicated icon + `FL` badge for `.File.gxSource`/`.File.gxFile`** so File objects are visually distinct in the KB tree.
+- Fixed: [visual-editor] **GX Properties hides properties newer than the KB's declared GeneXus version** — GX18-only properties no longer show up (and produce invalid metadata) in KBs declared as GX17/GX16; the version in `kb-config.json` is honoured.
+
+#### v1.9.16 — 2026-07-24
+- Fixed: [analyzer] **`order(<attributes>)` in a WebPanel/WorkPanel `#Rules` section is accepted** — `order(CustomerId);` / `order(CustomerName, CustomerId);` no longer reported as an invalid keyword; highest-coverage fix of the release (659 objects across 25 KBs failed at their first rule).
+- Fixed: [analyzer] **`Case`, `Order`, `Table` accepted as property keys inside `[ … ]`** (e.g. `[ DataType = 'Numeric(4.0)' Case = 'idCHARCASE_NONE' ]` on a Table column or `#Variables` entry).
+- Fixed: [analyzer] **`Delete`, `Error`, `Event`, `To` accepted as method/member names in an ExternalObject `#Methods`** — external platforms often expose methods whose name is a GeneXus keyword.
+- Fixed: [analyzer] **`WebComponent`/`WebMasterPage` accepted on the LHS of an assignment** (`&sdt.WebComponent = &link`).
+- Fixed: [analyzer] **Method calls whose name is a keyword on a user control now parse** — `Toastr1.Msg(ToastrType.Error, "text", 'Error')` inside an event; the parser previously accepted only a handful of keywords after a dot.
+- Fixed: [validator] **Collection methods (`Add`, `Item`, `Count`, `Clear`, …) on a nested SDT level resolved via `CollectionItemName`** — `&SDTDetalleItem.RetencionPercepcion.Add(&item)` no longer falsely flagged; the walk now matches levels by `CollectionItemName`, not only by name.
+- Fixed: [validator] **Chained-member validator keeps the module qualifier** — for an SDT that lives in several sibling modules (`ConectorDGI.V136/V137/V138`), the walk no longer drops the module part and pick the alphabetically-first version; a field added in a later version is validated against the version the variable actually declares.
+
+#### v1.9.15 — 2026-07-22
+- Fixed: [analyzer] **`WebComponent`/`WebMasterPage` recognised at the file header** — a `.WebComponent.gxSource` / `.WebMasterPage.gxSource` no longer errors on line 1; both are now first-class object types with the same section grammar as `WebPanel`.
+- Fixed: [validator] **`&MailMessage.Clear()` no longer flagged** — the `MailMessage` catalog was missing `Clear()`.
+
+#### v1.9.14 — 2026-07-21
+- Fixed: [analyzer] **Assignments to a variable property accept keywords as the member name** — `&sdt.End = 1` (and `Attribute.member` / `Control.member` in `#Rules`) now parse, matching what method-call forms already allowed; the semantic analyzer still checks the member exists.
+- Fixed: [analyzer] **Variables named `sdt`, `webpanel`, `procedure`, `dataprovider`, `dataselector` accepted** — `&sdt` etc. no longer error; same treatment as `&do`/`&new`/`&api`.
+
+#### v1.9.13 — 2026-07-15
+- Added: [sync-status] **Move/rename detected as a single `renamed` change** instead of a `deleted` + `modified` pair — the panel matches the qualifiedName of the deleted and created files in the same reconciliation cycle and writes one entry with the new `relativePath` + `oldRelativePath`; cards show a "Renamed from &lt;old path&gt;" hint. (Requires an Engine update to consume the `renamed` type.)
+- Fixed: [sync-status] **"Externalization blocked — last import failed" banner only on entries whose own status is `error`** — `Imported`/`Skipped`/`Pending` entries no longer carry the stale banner.
+- Fixed: [analyzer] **API mapping targets can be fully qualified** (`Query(in:&A, out:&B) => API.BatchRecord.WSFoo(&A, &B);`).
+- Fixed: [analyzer] **`Att:` prefix in expressions no longer errors** (`&x = Att:SomeAttr`, common in generated DataProviders).
+- Fixed: [analyzer] **`End` usable as a field name in DataProvider output mappings and item declarations** (`End = FooEnd`, `End { … }`).
+- Fixed: [analyzer] **`MB <expr>` and `Eject` print statements recognised** in report-style Procedures.
+
+### Platform
+- Bundle rebuilt from plugins v1.9.19 with `build-bundle.py --compile`: **750 JS / 9 CSS / 39 JSON, 2.3 MB** (was 732 / 9 / 39 / 2.2 MB at v1.9.12). Per extension: analyzer 248 (parser lexer + parser regenerated for the File grammar), visual-editor 187, language-server 186, sync-status 66, validator 43, controller 41, core 39. v1.9.18/v1.9.19 changed file *contents* only (analyzer, validator, core-lib, regenerated parser) — no new modules, so the counts are unchanged since v1.9.17.
+- v1.9.18/v1.9.19 needed no packaging work: upstream touched no `package.json`, no `syntaxes/*.tmLanguage.json`, no `shared/*.json` and added no runtime dependency, so VSIX skeletons, manual VSIX declaratives and `kbbridge/shared/` are all still in sync (verified by byte comparison + the drift smoke tests).
+- Added: **`adm-zip` bundled as a new visual-editor third-party dependency** — `FileBinaryEditorProvider` reads/writes the single-entry ZIP behind a `.gxFile`. `adm-zip@0.5.18` is pure CJS with zero runtime deps, so it is copied as-is (like `xslt-processor`); added to `build-bundle.py`'s visual-editor `third_party`. Without this the File binary editor would fail at runtime with `Cannot find module 'adm-zip'`.
+- Shared configs synced (`core-lib/shared/*.json` → `kbbridge/shared/`): `gx-methods-config.json` and `gx-properties-config.json` — the latter grew 80 KB → 256 KB (File's 13 properties + version-gated GX18 properties). Disk-only, not smoke-tested.
+- VSIX skeletons: `genexus-language-core` and `genexus-visual-editor` package.json synced by `sync-vsix-skeletons.py` — new `genexus.openLinkedBinaryFromActiveEditor` command, `.File.gxSource`/`.File.gxProperties` associations, and the `genexus.fileBinaryEditor` custom editor for `**/*.gxFile`.
+- Manual VSIX declaratives (not covered by skeleton sync): updated `genexus.tmLanguage.json` grammar (File/Table/ExternalObject/SDT/API line-1 highlighting) in the language-core VSIX; updated `icon-theme.json` + new `file.svg` in the icons VSIX.
+- Upstream plugin restructure: `genexus-ast` is now `out/`-only — the stale root-level compiled duplicates that caused the `WebMasterPage`-missing-from-`ObjectType` type-resolution bug were removed. Our pipeline already compiles to `out/`, so no change was needed.
+
+### VS Code 1.109.4
+- No upstream changes.
+
+### Tests
+- 24/24 smoke tests pass.
+
+### Bundle
+- **Must be uploaded to `keygenapi.kbbridge.com`** — proprietary JS/JSON changed across analyzer, validator, core, visual-editor (new `FileBinaryEditorProvider` + bundled `adm-zip`) and sync-status, plus the large `gx-properties-config.json`. Re-uploaded after folding in plugins v1.9.18/v1.9.19: the analyzer, validator, language-server and core-lib copies inside the ZIP all changed again.
+
 ## 1.8.3 — 2026-07-12
 
 **Plugins v1.9.12** | **VS Code 1.109.4**
