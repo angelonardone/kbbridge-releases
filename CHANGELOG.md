@@ -9,6 +9,82 @@ three independent streams:
 
 ---
 
+## 1.10.2 — 2026-09-20
+
+**Plugins v1.11.6** | **VS Code 1.109.4**
+
+> **PATCH bump** — license handling fix, no plugin changes.
+>
+> A renewed subscription could still be reported as expired. KBEditor now confirms the
+> current status with the license server before blocking anything, so a renewal takes
+> effect by itself on the next start — nothing to re-enter, no new key needed.
+>
+> Anyone who saw *"Your KBEditor license has expired"* while their subscription was
+> paid and current is fixed by this release. Affected users do not need to do anything
+> beyond installing it.
+
+### Plugins
+
+No plugin changes — still v1.11.6.
+
+### Platform
+
+- Fixed: **a renewed license could still be reported as expired.** The status bar showed
+  *License Expired* and the GeneXus extensions did not load, while the license panel
+  showed the same subscription as active with a future expiry date — the two disagreed
+  because renewals are applied without this machine's involvement, and KBEditor was
+  deciding from information it had collected earlier. It now re-checks with the license
+  server before blocking, and only blocks when the server agrees the license has lapsed.
+- Fixed: **a recovered license could be reported as expired for the same reason.**
+  *"Lost your license? Recover it"* now keeps everything the next check needs.
+- Fixed: **extensions failed to load after an upgrade between plans** (trial to monthly,
+  monthly to annual) when the license was brought back through recovery — locally cached
+  data from the previous plan was kept and could no longer be read. It is now refreshed.
+
+### VS Code 1.109.4
+
+No upstream changes.
+
+---
+
+## 1.10.1 — 2026-09-20
+
+**Plugins v1.11.6** | **VS Code 1.109.4**
+
+> **PATCH bump** — packaging fix only, no plugin changes. Error Lens was being embedded
+> **twice**: once correctly as `usernamehw.errorlens`, and once more as `kbbridge.errorlens`
+> with our publisher stamped over the original author's. Both copies declared the same 15
+> commands, so whichever lost the race died on startup with
+> `command 'errorLens.toggle' already exists`, leaving a red error in every user's log.
+>
+> The feature itself kept working — the surviving copy was always the mis-attributed one, since
+> built-ins are scanned in directory order — so nothing visible to users changes here beyond a
+> clean startup log and a single correctly-attributed entry in the Extensions list. The bug had
+> been present in every build since Error Lens was first bundled.
+>
+> Found while triaging a customer report where the GeneXus plugins were not loading. That turned
+> out to be an unrelated damaged installation, but this error was the loudest line in the logs
+> throughout and cost real diagnostic time.
+
+### Plugins
+
+No plugin changes — still v1.11.6.
+
+### Platform
+
+- Fixed: **Error Lens is no longer embedded twice.** `embed_extensions.sh` iterated over every
+  VSIX in `kbbridge/vsix/` without exception, so `errorlens.vsix` was extracted by the generic
+  loop as `kbbridge.errorlens` *and* by the third-party block as `usernamehw.errorlens`. The
+  generic loop now skips it, matching the guard `smoke-test.py` and `sync-vsix-skeletons.py`
+  already had. Installs self-heal on upgrade — the installer wipes `resources/app/extensions`
+  before writing.
+
+### VS Code 1.109.4
+
+No upstream changes.
+
+---
+
 ## 1.10.0 — 2026-08-10
 
 **Plugins v1.11.6** | **VS Code 1.109.4**
